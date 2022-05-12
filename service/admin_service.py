@@ -1,11 +1,11 @@
 import jwt
 import time
+from config import jwt_secret_key
 
 def login(admin_id, password):
     # print(admin_id)
     # print(password)
     # TODO:从数据库核验是否正确,如果不正确抛出异常/直接返回空
-    secret = "rin"
     headers = {
         "alg": "HS256",
         "typ": "JWT"
@@ -17,5 +17,5 @@ def login(admin_id, password):
         "type": "admin",
         "exp": exp
     }
-    token = jwt.encode(payload=payload, key=secret, algorithm='HS256', headers=headers)
+    token = jwt.encode(payload=payload, key=jwt_secret_key, algorithm='HS256', headers=headers)
     return token
