@@ -4,10 +4,11 @@
 
 ## 运行
 
-你可以使用jetbrains的pycharm运行，也可以直接`python app.py`，默认在本机`localhost:5000`开启RESTful服务。当然，在此之前你需要：
+你可以使用jetbrains的pycharm运行，也可以直接`python app.py`，默认在本机`localhost:5000`开启RESTful服务。依赖列表：
 
 ```shell
 pip install flask
+pip install pyjwt
 ```
 
 你可以自由选择vsc或者pycharm来编写代码，但个人觉得jb家的IDE都还挺好用的（，所以选择了pycharm。
