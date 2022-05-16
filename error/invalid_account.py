@@ -1,0 +1,2 @@
+class InvalidAccountError(Exception):
+    pass
