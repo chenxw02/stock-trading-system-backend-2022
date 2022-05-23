@@ -3,10 +3,12 @@ from demo_api import demo_api
 from admin_api import admin_api
 from admin_errorhandler import admin_error
 from exts import db
+from flask_cors import CORS
 
 import config
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 app.config.from_object(config)
 db.init_app(app)
 
