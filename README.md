@@ -12,6 +12,7 @@ pip install pyjwt # 登录功能鉴权使用jwt（json web token）
 pip install bcrypt # 数据库中存储密码使用bcrypt加密
 pip install pymysql # mysql驱动
 pip install flask-sqlalchemy # flask和sql的框架（ORM）
+pip install flask-cors # 允许跨域请求
 ```
 
 你可以自由选择vsc或者pycharm来编写代码，但个人觉得jb家的IDE都还挺好用的（，所以选择了pycharm。
