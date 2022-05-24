@@ -1,7 +1,7 @@
 from flask import Flask
-from demo_api import demo_api
-from admin_api import admin_api
-from admin_errorhandler import admin_error
+from controller.demo_api import demo_api
+from controller.admin_api import admin_api
+from controller.admin_errorhandler import admin_error
 from exts import db
 from flask_cors import CORS
 

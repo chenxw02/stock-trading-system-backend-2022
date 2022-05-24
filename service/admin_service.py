@@ -2,9 +2,9 @@ import jwt
 import time
 import bcrypt
 from config import jwt_secret_key
-from invalid_account import InvalidAccountError
-from admin_dao import AdminDao
-from admin import Admin
+from error.invalid_account import InvalidAccountError
+from dao.admin_dao import AdminDao
+from model.admin import Admin
 
 
 class AdminService:

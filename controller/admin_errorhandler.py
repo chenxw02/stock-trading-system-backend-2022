@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from admin_api import admin_api
-from invalid_account import InvalidAccountError
+from error.invalid_account import InvalidAccountError
 from result import Result
 
 admin_error = Blueprint("admin_error", __name__)
