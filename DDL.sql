@@ -68,4 +68,68 @@ create table deal(
     status varchar(10) not null,
     event varchar(10),
     primary key (deal_id)
-)
+);
+create table stock
+(
+    stock_id       varchar(20) not null,
+    stock_name     varchar(20) not null,
+    remain_number  int         not null,
+    price          double      not null,
+    stock_type     char(1)     not null,
+    stock_status   char(1)     not null,
+    rise_threshold double      not null,
+    fall_threshold double      not null,
+    primary key (stock_id),
+    check (stock_type in ('S', 'N')),
+    check (stock_status in ('T', 'F'))
+);
+create table instruction
+(
+    instruction_id      varchar(20) not null,
+    stock_id            varchar(20) not null,
+    fund_account_number varchar(20) not null,
+    buy_sell_flag       char(1)     not null,
+    target_number       int         not null,
+    actual_number       int         not null,
+    target_price        double      not null,
+    total_amount        double      not null,
+    time                int         not null,
+    instruction_state   char(1)     not null,
+    primary key (instruction_id),
+    foreign key (stock_id) references stock (stock_id),
+    foreign key (fund_account_number) references fund_account (fund_account_number),
+    check (buy_sell_flag in ('B', 'S')),
+    check (instruction_state in ('N', 'P', 'T', 'E')),
+);
+create table k
+(
+    k_id          varchar(20) not null,
+    stock_id      varchar(20) not null,
+    start_price   double,
+    end_price     double,
+    highest_price double,
+    lowest_price  double,
+    trade_number  int         not null,
+    trade_amount  double      not null,
+    date          int         not null,
+    primary key (k_id),
+    foreign key stock_id references stock(stock_id)
+);
+create table transaction
+(
+    transaction_id      varchar(20) not null,
+    stock_id            varchar(20) not null,
+    instruction_id      varchar(20) not null,
+    fund_account_number varchar(20) not null,
+    buy_sell_flag       char(1)     not null,
+    transaction_price   double      not null,
+    transaction_amount  double      not null,
+    transaction_number  int         not null,
+    transaction_date    int         not null,
+    transaction_time    int         not null,
+    primary key (transaction_id),
+    foreign key stock_id references stock(stock_id),
+    foreign key instruction_id references instruction(instruction_id),
+    foreign key fund_account_number references fund_account(fund_account_number),
+    check (buy_sell_flag in ('B', 'S'))
+);
