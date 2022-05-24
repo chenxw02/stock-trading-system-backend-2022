@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, request
 from service.admin_service import AdminService
-from result import Result
+from util.result import Result
 
 admin_api = Blueprint('admin_api', __name__)
 

@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, request
 from service.con_auc_service import ConAucService
-from result import Result
+from util.result import Result
 
 con_auc_api = Blueprint('con_auc_api', __name__)
 
