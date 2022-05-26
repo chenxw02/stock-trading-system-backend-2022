@@ -102,6 +102,7 @@ class AccountAdminService:
             AccountAdmin(administrator_id=admins_data["administrator_id"], administrator_password=encrypted_password))
         AccountAdminDao.insert(account_admins)
 
+    # 添加一个资金账户，合法返回1，否则返回0
     @staticmethod
     def add_fund_account(fund_account_data):
         account_information = []

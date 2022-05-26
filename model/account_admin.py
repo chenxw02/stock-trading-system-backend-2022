@@ -54,9 +54,9 @@ class PersonalSecuritiesAccount(db.Model):
 class FundAccount(db.Model):
     __tablename__ = "fund_account"
     fund_account_number = db.Column(db.String(20), nullable=False, primary_key=True)
-    balance = db.Column(db.Double, nullable=False)
-    frozen = db.Column(db.Double, nullable=False)
-    taken = db.Column(db.Double, nullable=False)
+    balance = db.Column(db.Float, nullable=False)
+    frozen = db.Column(db.Float, nullable=False)
+    taken = db.Column(db.Float, nullable=False)
     trade_password = db.Column(db.String(200), nullable=False)
     login_password = db.Column(db.String(200), nullable=False)
     account_status = db.Column(db.String(4), nullable=False)
@@ -69,4 +69,4 @@ class OwnStock(db.Model):
     securities_account_number = db.Column(db.String(20), nullable=False, primary_key=True)
     own_number = db.Column(db.Integer, nullable=False)
     frozen = db.Column(db.Integer, nullable=False)
-    own_amount = db.Column(db.Double, nullable=False)
+    own_amount = db.Column(db.Float, nullable=False)
