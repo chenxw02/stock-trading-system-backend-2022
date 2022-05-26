@@ -48,7 +48,6 @@ create table fund_account (
     taken double not null,
     trade_password varchar(200) not null,
     login_password varchar(200) not null,
-    login_status boolean not null,
     account_status varchar(4) not null,
     securities_account_number varchar(20) not null,
     primary key (fund_account_number)
@@ -59,7 +58,7 @@ create table own_stock (
     own_number int not null,
     frozen int not null,
     own_amount double not null,
-    primary key (stock_id)
+    primary key (stock_id,securities_account_number)
 );
 create table deal(
     deal_id int not null,

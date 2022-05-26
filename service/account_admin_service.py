@@ -7,6 +7,8 @@ from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
 from model.account_admin import PersonalSecuritiesAccount
 from model.account_admin import LegalPersonSecuritiesAccount
+from model.account_admin import FundAccount
+from model.account_admin import OwnStock
 
 
 class AccountAdminService:
@@ -99,3 +101,28 @@ class AccountAdminService:
         account_admins.append(
             AccountAdmin(administrator_id=admins_data["administrator_id"], administrator_password=encrypted_password))
         AccountAdminDao.insert(account_admins)
+
+    @staticmethod
+    def add_fund_account(fund_account_data):
+        account_information = []
+        securities_account_number = account_information["securities_account_number"].encode('utf-8')
+        if AccountAdminDao.check_fund_account(securities_account_number) == 0:
+            return 0
+        trade_password = account_information["trade_password"].encode('utf-8')
+        encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
+        login_password = account_information["login_password"].encode('utf-8')
+        encrypted_login_password = bcrypt.hashpw(login_password, bcrypt.gensalt())
+        account_information.append(FundAccount( \
+            fund_account_number = account_information["authorized_person_telephone"].encode('utf-8'), \
+            balance = account_information["balance"],\
+            frozen = account_information["frozen"], \
+            taken = account_information["taken"], \
+            trade_password = encrypted_trade_password, \
+            login_password = encrypted_login_password, \
+            account_status = account_information["account_status"].encode('utf-8'), \
+            securities_account_number = account_information["securities_account_number"].encode('utf-8'), \
+            ))
+        AccountAdminDao.insert(account_information)
+        return 1
+
+

@@ -39,3 +39,11 @@ def add_legal_person_securities_account():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.add_legal_person_securities_account(data)
     return Result.success(None)
+
+
+@account_admin_api.route("/account_admin/add_fund_account", methods=["POST"])
+def add_fund_account():
+    data = json.loads(request.get_data(as_text=True))
+    return AccountAdminService.add_fund_account(data)
+
+
