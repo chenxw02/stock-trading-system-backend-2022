@@ -1,5 +1,6 @@
 from exts import db
 from model.account_admin import AccountAdmin
+from model.account_admin import Deal
 
 # 将一个表的所有简单操作集中成一个dao数据库类
 class AccountAdminDao:
@@ -14,6 +15,6 @@ class AccountAdminDao:
         return account_admin
 
     @staticmethod
-    def get_deal(deal_id):
-        deal_server = AccountAdmin.query.get_deal(deal_id)
-        return deal_server
+    def get_deals():
+        deals = Deal.query.all()
+        return deals
