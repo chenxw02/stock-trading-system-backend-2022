@@ -7,13 +7,13 @@ class ConAucService:
 
     #连续竞价
     @staticmethod
-    def continue_auction():
-        buy = ConAucDao.getbuyinstr()
-        sell = ConAucDao.getsellinstr()
+    def continue_auction(inst_id):
+        buy = ConAucDao.getbuyinstr(inst_id)
+        sell = ConAucDao.getsellinstr(inst_id)
         if buy.target_price < sell.target_price:
             return 0    ##无法交易标志，没想好
         else:
-            transaction_price = 0.5 * (buy.target_price * sell.target_price)
+            transaction_price = 0.5 * (buy.target_price + sell.target_price)
             buyrest = buy.target_number - buy.actual_number
             sellrest = sell.target_number - sell.actual_number
             transaction_number = min(buyrest, sellrest)
