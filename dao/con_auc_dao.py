@@ -6,8 +6,8 @@ from sqlalchemy import and_
 
 class ConAucDao:
     @staticmethod
-    def getbuyinstr():
-        buy = db.session.query.filter(and_(buy_sell_flag='B', target_price=func.max(Instruction.target_price))).all()
+    def getbuyinstr(id):
+        buy = db.session.query.filter(and_(buy_sell_flag='B', target_price=func.max(Instruction.target_price), instruction_id=id)).filter(Instruction.instruction_state.in_('N', 'P')).all()
         if len(buy) == 1:
             return buy
         else:
@@ -19,8 +19,8 @@ class ConAucDao:
             return earlybuy;
 
     @staticmethod
-    def getsellinstr():
-        sell = db.session.query.filter(and_(buy_sell_flag='S', target_price=func.min(Instruction.target_price))).all()
+    def getsellinstr(id):
+        sell = db.session.query.filter(and_(buy_sell_flag='S', target_price=func.min(Instruction.target_price), instruction_id=id)).filter(Instruction.instruction_state.in_('N', 'P')).all()
         if len(sell) == 1:
             return sell
         else:
