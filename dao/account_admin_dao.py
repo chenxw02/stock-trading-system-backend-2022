@@ -25,9 +25,12 @@ class AccountAdminDao:
     @staticmethod
     def check_fund_account(securities_account_number):
         temp = PersonalSecuritiesAccount.query.get(securities_account_number)
-        if temp.empty() == 0:
+        if temp != None:
+            print("return 1-1")
             return 1
         temp = LegalPersonSecuritiesAccount.query.get(securities_account_number)
-        if temp.empty() == 0:
+        if temp != None:
+            print("return 1-2")
             return 1
+        print("check_fund_account return 0")
         return 0
