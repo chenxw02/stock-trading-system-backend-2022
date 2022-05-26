@@ -133,3 +133,10 @@ create table transaction
     foreign key fund_account_number references fund_account(fund_account_number),
     check (buy_sell_flag in ('B', 'S'))
 );
+create table queryuser
+(
+  ID varchar(20) not null,
+  password varchar(200) not null,
+  authority char(1) not null,
+  primary key(ID)
+);
