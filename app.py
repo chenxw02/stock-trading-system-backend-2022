@@ -1,7 +1,9 @@
 from flask import Flask
 from controller.demo_api import demo_api
 from controller.admin_api import admin_api
+from controller.account_admin_api import account_admin_api
 from controller.admin_errorhandler import admin_error
+from controller.account_admin_errorhandler import account_admin_error
 from exts import db
 from flask_cors import CORS
 
@@ -15,6 +17,9 @@ db.init_app(app)
 app.register_blueprint(demo_api)
 app.register_blueprint(admin_api)
 app.register_blueprint(admin_error)
+app.register_blueprint(account_admin_api)
+app.register_blueprint(account_admin_error)
+
 
 
 @app.route('/', methods=["GET", "POST"])

@@ -12,3 +12,8 @@ class AccountAdminDao:
     def get(administrator_id):
         account_admin = AccountAdmin.query.get(administrator_id)
         return account_admin
+
+    @staticmethod
+    def get_deal(deal_id):
+        deal_server = AccountAdmin.query.get_deal(deal_id)
+        return deal_server

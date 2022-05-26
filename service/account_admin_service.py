@@ -30,3 +30,6 @@ class AccountAdminService:
         }
         token = jwt.encode(payload=payload, key=jwt_secret_key, algorithm='HS256', headers=headers)
         return token
+
+ #   @staticmethod
+ #   def deal(administrator_id, administrator_password):
