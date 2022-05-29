@@ -8,7 +8,7 @@ from error.invalid_account import InvalidAccountError,InvalidAccountNameError,No
 from dao.query_user_dao import QueryUserDao
 from model.query_user import QueryUser
 from dao.payment_dao import PaymentDao
-from unit.result import Result
+from util.result import Result
 prefix = "40"
 
 class QueryUserService:

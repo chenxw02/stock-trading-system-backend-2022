@@ -2,7 +2,7 @@ from flask import Blueprint
 
 from controller.query_user_api import query_user_api
 from error.invalid_account import InvalidAccountError,InvalidAccountNameError,MissAccountError,NotSamePasswordError,NoneAccountNameError,InvalidPaymentAccountError,LackOfBalance,AlreadyAdvance
-from unit.result import Result
+from util.result import Result
 query_user_error = Blueprint("query_user_error", __name__)
 prefix = "40"
 

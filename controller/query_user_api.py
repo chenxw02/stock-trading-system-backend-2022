@@ -2,7 +2,7 @@ import jwt
 import json
 from flask import Blueprint, request
 from service.query_user_service import QueryUserService
-from unit.result import Result
+from util.result import Result
 from config import jwt_secret_key
 from error.invalid_account import MissAccountError,NotSamePasswordError
 query_user_api = Blueprint('query_user_api', __name__)
