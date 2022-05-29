@@ -7,6 +7,7 @@ from controller.account_admin_errorhandler import account_admin_error
 from controller.release_search_api import release_search_api
 from controller.query_user_api import query_user_api
 from controller.query_user_errorhandler import query_user_error
+from controller.trade_api import trade_api
 from exts import db
 from flask_cors import CORS
 
@@ -25,7 +26,7 @@ app.register_blueprint(account_admin_error)
 app.register_blueprint(release_search_api)
 app.register_blueprint(query_user_api)
 app.register_blueprint(query_user_error)
-
+app.register_blueprint(trade_api)
 
 @app.route('/', methods=["GET", "POST"])
 def hello_world():  # put application's code here
