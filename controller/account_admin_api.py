@@ -48,10 +48,26 @@ def add_fund_account():
     return Result.success(None)
 
 
-# @account_admin_api.route("/account_admin/modify_money", methods=["POST"])
-# def modify_money():
-#     data = json.loads(request.get_data(as_text=True))
-#     AccountAdminService.modify_money(data)
-#     return Result.success(None)
+@account_admin_api.route("/account_admin/modify_money", methods=["POST"])
+def modify_money():
+    data = json.loads(request.get_data(as_text=True))
+    print(data)
+    AccountAdminService.modify_money(data)
+    return Result.success(None)
+
+@account_admin_api.route("/account_admin/fund_change_password", methods=["POST"])
+def fund_change_password():
+    data = json.loads(request.get_data(as_text=True))
+    print(data)
+    AccountAdminService.fund_change_password(data)
+    return Result.success(None)
+
+@account_admin_api.route("/account_admin/fund_delete", methods=["POST"])
+def fund_delete():
+    data = json.loads(request.get_data(as_text=True))
+    print(data)
+    AccountAdminService.fund_delete(data)
+    return Result.success(None)
+
 
 

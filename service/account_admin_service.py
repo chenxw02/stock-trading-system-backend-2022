@@ -133,5 +133,78 @@ class AccountAdminService:
         return "ok"
 
 
+    # 资金账户存取款
+    @staticmethod
+    def modify_money(data):
+        fund_account_number = data["fund_account_number"]
+        input_trade_password = data["trade_password"].encode('utf-8')
+        add_withdraw = data["add_withdraw"]
+        operating_num = data["operating_num"]
+        if operating_num <= 0:
+            # 存取款金额小于等于0
+            raise MinusMoneyError()
+        fund_account = AccountAdminDao.get_fund(fund_account_number)
+        if fund_account is None:
+            # 找不到账户
+            raise InvalidAccountError()
+        encrypted_password = fund_account.trade_password
+        if not bcrypt.checkpw(input_trade_password, encrypted_password.encode("utf-8")):
+            # 账户密码不匹配
+            raise InvalidAccountError()
+        if add_withdraw == 0:
+            #存款
+            AccountAdminDao.fund_save_money(operating_num, fund_account)
+        else:
+            #取款
+            if operating_num <= fund_account.balance:
+                AccountAdminDao.fund_take_money(operating_num, fund_account)
+            else:
+                # 取款，钱不够
+                raise NoMoneyError()
+
+    # 资金账户修改密码
+    @staticmethod
+    def fund_change_password(data):
+        fund_account_number = data["fund_account_number"]
+        trade_withdraw = data["trade_withdraw"]
+        old_input_password = data["old_password"].encode('utf-8')
+        new_input_password = data["new_password"].encode('utf-8')
+        fund_account = AccountAdminDao.get_fund(fund_account_number)
+        if fund_account is None:
+            raise InvalidAccountError()
+        if trade_withdraw == 0:
+            encrypted_password = fund_account.trade_password
+        else:
+            encrypted_password = fund_account.login_password
+        if not bcrypt.checkpw(old_input_password, encrypted_password.encode("utf-8")):
+            raise InvalidAccountError()
+        password = bcrypt.hashpw(new_input_password, bcrypt.gensalt())
+        AccountAdminDao.fund_password(password, fund_account, trade_withdraw)
+
+    # 资金账户销户
+    @staticmethod
+    def fund_delete(data):
+        id_num_legal_register_num = data["id_num/legal_register_num"]
+        security_num = data["security_num"]
+        security_account = AccountAdminDao.get_personal(security_num)
+        if security_account is None:
+            security_account = AccountAdminDao.get_legal(security_num)
+            if security_account is None:
+                # 没有该资金账户
+                raise InvalidAccountError()
+            else:
+                if id_num_legal_register_num != security_account.legal_person_id_number:
+                    # 法人证券账户与用户身份证不匹配
+                    raise InvalidAccountError()
+        else:
+            if id_num_legal_register_num != security_account.user_id_number:
+                # 个人证券账户与用户身份证不匹配
+                raise InvalidAccountError()
+        fund_account = AccountAdminDao.get_fund_by_security(security_num)
+        AccountAdminDao.fund_password(fund_account)
+        AccountAdminDao.fund_password(security_account)
+
+
+
 
 

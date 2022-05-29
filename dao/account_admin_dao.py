@@ -3,6 +3,7 @@ from model.account_admin import AccountAdmin
 from model.account_admin import Deal
 from model.account_admin import PersonalSecuritiesAccount
 from model.account_admin import LegalPersonSecuritiesAccount
+from model.account_admin import FundAccount
 
 # 将一个表的所有简单操作集中成一个dao数据库类
 class AccountAdminDao:
@@ -34,3 +35,60 @@ class AccountAdminDao:
             return 1
         print("check_fund_account return 0")
         return 0
+
+    # 查找资金账户
+    @staticmethod
+    def get_fund(fund_account_number):
+        fund_account = FundAccount.query.get(fund_account_number)
+        return fund_account
+
+    # 根据证券账户查找资金账户
+    @staticmethod
+    def get_fund_by_security(security_num):
+        fund_account = FundAccount.query.filter_by(securities_account_number=security_num).first()
+        return fund_account
+
+    # 查找个人证券账户
+    @staticmethod
+    def get_personal(security_num):
+        security_account = PersonalSecuritiesAccount.query.get(security_num)
+        return security_account
+
+    # 查找法人证券账户
+    @staticmethod
+    def get_legal(security_num):
+        security_account = LegalPersonSecuritiesAccount.query.get(security_num)
+        return security_account
+
+    # 资金账户存款
+    @staticmethod
+    def fund_save_money(money, fund_account):
+        fund_account.balance = fund_account.balance + money
+        db.session.commit()
+
+    # 资金账户取款
+    @staticmethod
+    def fund_take_money(money, fund_account):
+        fund_account.balance = fund_account.balance - money
+        db.session.commit()
+
+    # 修改资金账户密码
+    @staticmethod
+    def fund_password(password, fund_account, trade_withdraw):
+        if trade_withdraw == 0:
+            fund_account.trade_password = password
+        else:
+            fund_account.login_password = password
+        db.session.commit()
+
+    # 资金账户删除一条记录（销户）
+    @staticmethod
+    def fund_password(fund_account):
+        db.session.delete(fund_account)
+        db.session.commit()
+
+    # 证券账户冻结
+    @staticmethod
+    def fund_password(security_account):
+        security_account.status = "no"
+        db.session.commit()

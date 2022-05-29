@@ -23,6 +23,7 @@ create table personal_securities_account (
     agent boolean not null,
     agent_id varchar(18),
     authority varchar(3),
+    status varchar(2) not null,
     primary key (p_account_number)
 );
 create table legal_person_securities_account (
@@ -39,6 +40,7 @@ create table legal_person_securities_account (
     authorized_person_telephone varchar(11) not null,
     authorized_person_address varchar(100) not null,
     authority varchar(3) not null,
+    status varchar(2) not null,
     primary key (l_account_number)
 );
 create table fund_account (
