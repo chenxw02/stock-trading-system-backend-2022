@@ -31,6 +31,7 @@ class LegalPersonSecuritiesAccount(db.Model):
     authorized_person_telephone = db.Column(db.String(11), nullable=False)
     authorized_person_address = db.Column(db.String(100), nullable=False)
     authority = db.Column(db.String(3), nullable=False)
+    status = db.Column(db.String(2), nullable=False)
 
 
 class PersonalSecuritiesAccount(db.Model):
@@ -49,6 +50,7 @@ class PersonalSecuritiesAccount(db.Model):
     agent = db.Column(db.Boolean, nullable=False)
     agent_id = db.Column(db.String(18))
     authority = db.Column(db.String(3))
+    status = db.Column(db.String(2), nullable=False)
 
 
 class FundAccount(db.Model):

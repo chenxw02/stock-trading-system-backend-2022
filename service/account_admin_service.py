@@ -40,7 +40,10 @@ class AccountAdminService:
         result = {}
         temp_deal = AccountAdminDao.get_deals()
         for temp in temp_deal:
-            result[temp.deal_id] = temp.status
+            # result[temp.deal_id] = temp.status
+            result["deal_id"] = temp.deal_id
+            result["status"] = temp.status
+            result["person_id"] = temp.person_id
         print("dxp:")
         print(result)
         return result
@@ -103,7 +106,7 @@ class AccountAdminService:
             AccountAdmin(administrator_id=admins_data["administrator_id"], administrator_password=encrypted_password))
         AccountAdminDao.insert(account_admins)
 
-    # 添加一个资金账户，合法返回1，否则返回0
+    # 添加一个资金账户，合法返回“ok"，否则返回"failed"
     @staticmethod
     def add_fund_account(fund_account_data):
         account_information = []
@@ -125,4 +128,7 @@ class AccountAdminService:
         AccountAdminDao.insert(account_information)
         print(account_information)
         return "ok"
+
+
+
 
