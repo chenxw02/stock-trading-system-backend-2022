@@ -3,6 +3,7 @@ import time
 import bcrypt
 from config import jwt_secret_key
 from error.invalid_account import InvalidAccountError
+from error.wrong_money import NoMoneyError, MinusMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
 from model.account_admin import PersonalSecuritiesAccount
@@ -68,7 +69,7 @@ class AccountAdminService:
             telephone=account_data["telephone"].encode('utf-8'), \
             agent=account_data["agent"], \
             agent_id=account_data["agent_id"].encode('utf-8'), \
-            authority=account_data["authority"].encode('utf-8'),\
+            authority=account_data["authority"].encode('utf-8'), \
             status="1"
         ))
         print(account_information)
@@ -94,7 +95,7 @@ class AccountAdminService:
             authorized_person_address=account_data["authorized_person_address"].encode('utf-8'), \
             authority=account_data["authority"].encode('utf-8'), \
             status="1"
-            ))
+        ))
         AccountAdminDao.insert(account_information)
 
     # 实际并没有这个接口开放，可以事先开放插入管理员之后关闭它
@@ -127,11 +128,11 @@ class AccountAdminService:
                                                trade_password=encrypted_trade_password,
                                                login_password=encrypted_login_password,
                                                account_status=fund_account_data["account_status"],
-                                               securities_account_number=fund_account_data["securities_account_number"]))
+                                               securities_account_number=fund_account_data[
+                                                   "securities_account_number"]))
         AccountAdminDao.insert(account_information)
         print(account_information)
         return "ok"
-
 
     # 资金账户存取款
     @staticmethod
@@ -152,10 +153,10 @@ class AccountAdminService:
             # 账户密码不匹配
             raise InvalidAccountError()
         if add_withdraw == 0:
-            #存款
+            # 存款
             AccountAdminDao.fund_save_money(operating_num, fund_account)
         else:
-            #取款
+            # 取款
             if operating_num <= fund_account.balance:
                 AccountAdminDao.fund_take_money(operating_num, fund_account)
             else:
@@ -181,7 +182,8 @@ class AccountAdminService:
         password = bcrypt.hashpw(new_input_password, bcrypt.gensalt())
         AccountAdminDao.fund_password(password, fund_account, trade_withdraw)
 
-    # 资金账户销户
+        # 资金账户销户
+
     @staticmethod
     def fund_delete(data):
         id_num_legal_register_num = data["id_num/legal_register_num"]
@@ -201,10 +203,19 @@ class AccountAdminService:
                 # 个人证券账户与用户身份证不匹配
                 raise InvalidAccountError()
         fund_account = AccountAdminDao.get_fund_by_security(security_num)
-        AccountAdminDao.fund_password(fund_account)
-        AccountAdminDao.fund_password(security_account)
+        if fund_account is None:
+            # 个人证券账户与用户身份证不匹配
+            raise InvalidAccountError()
+        AccountAdminDao.fund_delete_one(fund_account)
+        AccountAdminDao.security_froze(security_account)
 
-
-
-
-
+    # 个人证券账户冻结
+    @staticmethod
+    def personal_security_freeze(data):
+        id_num = data["id_num"]
+        security_account = AccountAdminDao.get_personal_by_id(id_num)
+        if security_account is None:
+            # 身份证号码无效
+            raise InvalidAccountError()
+        else:
+            AccountAdminDao.security_froze(id_num)

@@ -55,12 +55,14 @@ def modify_money():
     AccountAdminService.modify_money(data)
     return Result.success(None)
 
+
 @account_admin_api.route("/account_admin/fund_change_password", methods=["POST"])
 def fund_change_password():
     data = json.loads(request.get_data(as_text=True))
     print(data)
     AccountAdminService.fund_change_password(data)
     return Result.success(None)
+
 
 @account_admin_api.route("/account_admin/fund_delete", methods=["POST"])
 def fund_delete():
@@ -70,4 +72,8 @@ def fund_delete():
     return Result.success(None)
 
 
-
+@account_admin_api.route("/account_admin/personal_security_freeze", methods=["POST"])
+def personnal_security_freeze():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.personal_security_freeze(data)
+    return Result.success(None)

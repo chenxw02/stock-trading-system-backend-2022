@@ -5,6 +5,7 @@ from model.account_admin import PersonalSecuritiesAccount
 from model.account_admin import LegalPersonSecuritiesAccount
 from model.account_admin import FundAccount
 
+
 # 将一个表的所有简单操作集中成一个dao数据库类
 class AccountAdminDao:
     @staticmethod
@@ -83,12 +84,22 @@ class AccountAdminDao:
 
     # 资金账户删除一条记录（销户）
     @staticmethod
-    def fund_password(fund_account):
+    def fund_delete_one(fund_account):
+        print("start delete")
         db.session.delete(fund_account)
+        print("delete ok")
         db.session.commit()
 
     # 证券账户冻结
     @staticmethod
-    def fund_password(security_account):
+    def security_froze(security_account):
+        print("start froze")
         security_account.status = "no"
+        print("froze ok")
         db.session.commit()
+
+    # 根据个人身份证号查找证券账户
+    @staticmethod
+    def get_personal_by_id(id_num):
+        security_account = PersonalSecuritiesAccount.query.get(id_num)
+        return security_account
