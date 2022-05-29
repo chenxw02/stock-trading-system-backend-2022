@@ -4,7 +4,7 @@ from flask import Blueprint, request
 from service.query_user_service import QueryUserService
 from util.result import Result
 from config import jwt_secret_key
-from error.invalid_account import MissAccountError,NotSamePasswordError
+from error.query_user_error import MissAccountError,NotSamePasswordError
 query_user_api = Blueprint('query_user_api', __name__)
 
 
