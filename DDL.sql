@@ -139,3 +139,9 @@ create table queryuser
   authority char(1) not null,
   primary key(ID)
 );
+create table  payaccount (
+  pay_account_id varchar(20) not null,
+  pay_account_psw varchar(200) not null,
+  balance int not null,
+  primary key (pay_account_id)
+);

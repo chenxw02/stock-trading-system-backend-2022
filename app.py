@@ -5,6 +5,8 @@ from controller.account_admin_api import account_admin_api
 from controller.admin_errorhandler import admin_error
 from controller.account_admin_errorhandler import account_admin_error
 from controller.release_search_api import release_search_api
+from controller.query_user_api import query_user_api
+from controller.query_user_errorhandler import query_user_error
 from exts import db
 from flask_cors import CORS
 
@@ -21,7 +23,8 @@ app.register_blueprint(admin_error)
 app.register_blueprint(account_admin_api)
 app.register_blueprint(account_admin_error)
 app.register_blueprint(release_search_api)
-
+app.register_blueprint(query_user_api)
+app.register_blueprint(query_user_error)
 
 
 @app.route('/', methods=["GET", "POST"])

@@ -38,3 +38,47 @@ class AggAucService:
             r_last_cnt = len(t_record)
             # 更新数据表 待补充
         return t_record
+
+    @staticmethod
+    def update(t_id):
+        # update stock price
+        t_price = AggAucDao.gettransprice(t_id)
+        s_id = AggAucDao.getstockid(t_id)
+        AggAucDao.updatestockprice(s_id, t_price)
+
+        # update K table
+        date = AggAucDao.getstockid(t_id)
+        k_info = AggAucDao.getkinfo(s_id, date)
+        for i in k_info:
+            h_pri = i.highest_price
+            l_pri = i.lowest_price
+            k_id = i.stock_id
+
+        if(h_pri == None):
+            AggAucDao.updatestartprice(k_id, t_price)
+
+        AggAucDao.updateendprice(k_id, t_price)
+
+        if(t_price > h_pri or h_pri == None):
+            AggAucDao.updatehighestprice(k_id, t_price)
+
+        if(t_price < l_pri or l_pri == None):
+            AggAucDao.updatelowestprice(k_id, t_price)
+
+        i_id = AggAucDao.getinstid(t_id)
+        t_number = AggAucDao.getinstnumber(t_id)
+        t_amount = AggAucDao.getinstamount(t_id)
+        AggAucDao.updateinstinfo(i_id, t_number, t_amount)
+
+        i_info = AggAucDao.getinstinfo(i_id)
+        for i in i_info:
+            t_num = i.target_number
+            a_num = i.actual_number
+
+        if(t_num == a_num):
+            flag = 'N'
+        else:
+            flag = 'P'
+
+        AggAucDao.updateinsttype(i_id, flag)
+
