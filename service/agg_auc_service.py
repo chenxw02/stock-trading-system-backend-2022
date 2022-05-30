@@ -77,7 +77,7 @@ class AggAuc:
             a_num = i.actual_number
 
         if(t_num == a_num):
-            flag = 'N'
+            flag = 'T'
         else:
             flag = 'P'
 
