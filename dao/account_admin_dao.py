@@ -96,10 +96,22 @@ class AccountAdminDao:
         security_account.status = "no"
         db.session.commit()
 
+    # 证券账户解冻
+    @staticmethod
+    def security_thaw(security_account):
+        security_account.status = "ok"
+        db.session.commit()
+
     # 资金账户冻结
     @staticmethod
     def fund_froze(fund_account):
         fund_account.account_status = "no"
+        db.session.commit()
+    
+    # 资金账户解冻
+    @staticmethod
+    def fund_thaw(fund_account):
+        fund_account.account_status = "ok"
         db.session.commit()
 
     # 根据个人身份证号查找证券账户
