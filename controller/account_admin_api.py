@@ -71,7 +71,7 @@ def fund_delete():
     AccountAdminService.fund_delete(data)
     return Result.success(None)
 
-
+# 个人证券账户冻结
 @account_admin_api.route("/account_admin/personal_security_freeze", methods=["POST"])
 def personnal_security_freeze():
     data = json.loads(request.get_data(as_text=True))
