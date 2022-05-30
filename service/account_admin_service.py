@@ -81,7 +81,7 @@ class AccountAdminService:
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
         account_information.append(LegalPersonSecuritiesAccount( \
-            l_account_number=account_information["l_account_number"].encode('utf-8'), \
+            l_account_number=account_data["l_account_number"].encode('utf-8'), \
             password=encrypted_password, \
             legal_person_registration_number=account_data["legal_person_registration_number"].encode('utf-8'), \
             business_license_number=account_data["business_license_number"].encode('utf-8'), \
@@ -94,7 +94,7 @@ class AccountAdminService:
             authorized_person_telephone=account_data["authorized_person_telephone"].encode('utf-8'), \
             authorized_person_address=account_data["authorized_person_address"].encode('utf-8'), \
             authority=account_data["authority"].encode('utf-8'), \
-            status="1"
+            status="ok"
         ))
         AccountAdminDao.insert(account_information)
 
@@ -116,7 +116,7 @@ class AccountAdminService:
         account_information = []
         securities_account_number = fund_account_data["securities_account_number"]
         print(securities_account_number)
-        if (AccountAdminDao.check_fund_account(securities_account_number) == 1):
+        if (AccountAdminDao.check_fund_account(securities_account_number) == 0):
             return "failed"
         trade_password = fund_account_data["trade_password"].encode('utf-8')
         encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
