@@ -13,7 +13,7 @@ agg_auc_api = Blueprint('agg_auc_api', __name__)
 
 @agg_auc_api.route("/agg_auc", methods=["POST"])
 def agg_auc():
-    instruction_id = json.loads(request.get_data(as_text=True))
-    # print(data)
-    AggAucService.agg_auc(instruction_id)
+    # instruction_id = json.loads(request.get_data(as_text=True))
+    # # print(data)
+    AggAucService.agg_auc()
     return Result.success(None)
