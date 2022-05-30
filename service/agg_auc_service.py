@@ -1,5 +1,5 @@
 from dao.agg_auc_dao import AggAucDao
-from model.agg_auc import Instruction
+from model.center_trade import Instruction
 
 
 class AggAucService:

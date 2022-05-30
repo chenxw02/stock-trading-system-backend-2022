@@ -1,8 +1,8 @@
 from exts import db
-from model.agg_auc import Instruction
-from model.agg_auc import K
-from model.agg_auc import Stock
-from model.agg_auc import Transaction
+from model.center_trade import Instruction
+from model.center_trade import K
+from model.center_trade import Stock
+from model.center_trade import Transaction
 from sqlalchemy import and_
 
 

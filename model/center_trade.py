@@ -14,6 +14,29 @@ class Instruction(db.Model):
     instruction_state = db.Column(db.Char, nullable=False)
     total_amount = db.Column(db.Double, nullable=False)
 
+class Stock(db.Model):
+    __tablename__ = "stock"
+    stock_id = db.Column(db.String(20), nullable=False, primary_key=True)
+    stock_name = db.Column(db.String(20), nullable=False)
+    remain_number = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Double, nullable=False)
+    stock_type = db.Column(db.Char, nullable=False)
+    stock_status = db.Column(db.Char, nullable=False)
+    rise_threshold = db.Column(db.Double, nullable=False)
+    fall_threshold = db.Column(db.Double, nullable=False)
+
+class K(db.Model):
+    __tablename__ = "k"
+    k_id = db.Column(db.String(20), nullable=False, primary_key=True)
+    stock_id = db.Column(db.String(20), db.ForeignKey("stock.stock_id"), nullable=False)
+    start_price = db.Column(db.Double, nullable=True)
+    end_price = db.Column(db.Double, nullable=True)
+    highest_price = db.Column(db.Double, nullable=True)
+    lowest_price = db.Column(db.Double, nullable=True)
+    trade_number = db.Column(db.Integer, nullable=False)
+    start_price = db.Column(db.Double, nullable=False)
+    date = db.Column(db.Integer, nullable=False)
+
 class Transaction(db.Model):
     __tablename__ = "transaction"
     transaction_id = db.Column(db.String(20), nullable=False, primary_key=True)
