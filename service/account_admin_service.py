@@ -3,6 +3,7 @@ import time
 import bcrypt
 from config import jwt_secret_key
 from error.invalid_account import InvalidAccountError
+from error.invalid_account import NoneAccountError
 from error.wrong_money import NoMoneyError, MinusMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -147,7 +148,7 @@ class AccountAdminService:
         fund_account = AccountAdminDao.get_fund(fund_account_number)
         if fund_account is None:
             # 找不到账户
-            raise InvalidAccountError()
+            raise NoneAccountError()
         encrypted_password = fund_account.trade_password
         if not bcrypt.checkpw(input_trade_password, encrypted_password.encode("utf-8")):
             # 账户密码不匹配
@@ -172,18 +173,19 @@ class AccountAdminService:
         new_input_password = data["new_password"].encode('utf-8')
         fund_account = AccountAdminDao.get_fund(fund_account_number)
         if fund_account is None:
-            raise InvalidAccountError()
+            # 没有该number的资金账户
+            raise NoneAccountError()
         if trade_withdraw == 0:
             encrypted_password = fund_account.trade_password
         else:
             encrypted_password = fund_account.login_password
         if not bcrypt.checkpw(old_input_password, encrypted_password.encode("utf-8")):
+            # 密码错误
             raise InvalidAccountError()
         password = bcrypt.hashpw(new_input_password, bcrypt.gensalt())
         AccountAdminDao.fund_password(password, fund_account, trade_withdraw)
 
-        # 资金账户销户
-
+    # 资金账户销户
     @staticmethod
     def fund_delete(data):
         id_num_legal_register_num = data["id_num/legal_register_num"]
@@ -193,7 +195,7 @@ class AccountAdminService:
             security_account = AccountAdminDao.get_legal(security_num)
             if security_account is None:
                 # 没有该资金账户
-                raise InvalidAccountError()
+                raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.legal_person_id_number:
                     # 法人证券账户与用户身份证不匹配
@@ -204,8 +206,8 @@ class AccountAdminService:
                 raise InvalidAccountError()
         fund_account = AccountAdminDao.get_fund_by_security(security_num)
         if fund_account is None:
-            # 个人证券账户与用户身份证不匹配
-            raise InvalidAccountError()
+            # 该证券账户没有绑定资金账户
+            raise NoneAccountError()
         AccountAdminDao.fund_delete_one(fund_account)
         AccountAdminDao.security_froze(security_account)
 

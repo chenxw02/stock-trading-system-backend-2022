@@ -2,8 +2,10 @@ from flask import Blueprint
 
 from controller.account_admin_api import account_admin_api
 from error.invalid_account import InvalidAccountError
+from error.invalid_account import NoneAccountError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
+from error.wrong_money import RemainMoneyError
 from util.result import Result
 
 account_admin_error = Blueprint("account_admin_error", __name__)
@@ -14,6 +16,9 @@ prefix = "10"
 def invalid_account_error(error):
     return Result.error(prefix+"1", "账号密码错误")
 
+@account_admin_api.errorhandler(NoneAccountError)
+def invalid_account_error(error):
+    return Result.error(prefix+"1", "未找到账户")
 
 @account_admin_api.errorhandler(Exception)
 def invalid_account_error(error):
@@ -28,3 +33,7 @@ def wrong_money_error(error):
 @account_admin_api.errorhandler(NoMoneyError)
 def wrong_money_error(error):
     return Result.error(prefix + "1", "资金不足")
+
+@account_admin_api.errorhandler(RemainMoneyError)
+def wrong_money_error(error):
+    return Result.error(prefix + "1", "该资金账户尚有存款")
