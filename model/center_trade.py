@@ -34,7 +34,7 @@ class K(db.Model):
     highest_price = db.Column(db.Double, nullable=True)
     lowest_price = db.Column(db.Double, nullable=True)
     trade_number = db.Column(db.Integer, nullable=False)
-    start_price = db.Column(db.Double, nullable=False)
+    trade_amount = db.Column(db.Double, nullable=False)
     date = db.Column(db.Integer, nullable=False)
 
 class Transaction(db.Model):
