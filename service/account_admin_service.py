@@ -4,7 +4,7 @@ import bcrypt
 from config import jwt_secret_key
 from error.invalid_account import InvalidAccountError
 from error.invalid_account import NoneAccountError
-from error.wrong_money import NoMoneyError, MinusMoneyError
+from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
 from model.account_admin import PersonalSecuritiesAccount
@@ -208,6 +208,9 @@ class AccountAdminService:
         if fund_account is None:
             # 该证券账户没有绑定资金账户
             raise NoneAccountError()
+        if fund_account.balance > 0:
+            # 该资金账户尚有存款
+            raise RemainMoneyError()
         AccountAdminDao.fund_delete_one(fund_account)
         AccountAdminDao.security_froze(security_account)
 
