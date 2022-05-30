@@ -20,7 +20,7 @@ class ConAucService:
         t_id = ConAuc.createtransres(con_res)
 
         # 更新数据
-        ConAuc.update(t_id)
-        ConAuc.update(t_id)
+        ConAuc.update(t_id[0])
+        ConAuc.update(t_id[1])
 
         return t_id
