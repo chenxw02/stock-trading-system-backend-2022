@@ -3,3 +3,6 @@ class InvalidAccountError(Exception):
 
 class NoneAccountError(Exception):
     pass
+
+class FrozenAccountError(Exception):
+    pass

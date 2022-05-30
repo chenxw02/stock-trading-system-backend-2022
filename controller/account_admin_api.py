@@ -77,3 +77,17 @@ def personnal_security_freeze():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.personal_security_freeze(data)
     return Result.success(None)
+
+# 法人证券账户冻结
+@account_admin_api.route("/account_admin/legal_person_security_freeze", methods=["POST"])
+def legal_person_security_freeze():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.legal_person_security_freeze(data)
+    return Result.success(None)
+
+# 资金账户冻结
+@account_admin_api.route("/account_admin/fund_freeze", methods=["POST"])
+def fund_freeze():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.fund_freeze(data)
+    return Result.success(None)

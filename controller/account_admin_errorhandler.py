@@ -3,6 +3,7 @@ from flask import Blueprint
 from controller.account_admin_api import account_admin_api
 from error.invalid_account import InvalidAccountError
 from error.invalid_account import NoneAccountError
+from error.invalid_account import FrozenAccountError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
 from error.wrong_money import RemainMoneyError
@@ -19,6 +20,10 @@ def invalid_account_error(error):
 @account_admin_api.errorhandler(NoneAccountError)
 def invalid_account_error(error):
     return Result.error(prefix+"1", "未找到账户")
+
+@account_admin_api.errorhandler(FrozenAccountError)
+def invalid_account_error(error):
+    return Result.error(prefix+"1", "该账户已冻结")
 
 @account_admin_api.errorhandler(Exception)
 def invalid_account_error(error):

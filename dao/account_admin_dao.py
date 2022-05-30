@@ -93,13 +93,23 @@ class AccountAdminDao:
     # 证券账户冻结
     @staticmethod
     def security_froze(security_account):
-        print("start froze")
         security_account.status = "no"
-        print("froze ok")
+        db.session.commit()
+
+    # 资金账户冻结
+    @staticmethod
+    def fund_froze(fund_account):
+        fund_account.account_status = "no"
         db.session.commit()
 
     # 根据个人身份证号查找证券账户
     @staticmethod
     def get_personal_by_id(id_num):
-        security_account = PersonalSecuritiesAccount.query.get(id_num)
+        security_account = PersonalSecuritiesAccount.query.filter_by(user_id_number=id_num).first()
+        return security_account
+
+    # 根据法人注册登记号查找证券账户
+    @staticmethod
+    def get_legal_person_by_id(legal_register_num):
+        security_account = LegalPersonSecuritiesAccount.query.filter_by(legal_person_registration_number=legal_register_num).first()
         return security_account
