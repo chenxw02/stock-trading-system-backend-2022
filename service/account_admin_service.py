@@ -2,8 +2,8 @@ import jwt
 import time
 import bcrypt
 from config import jwt_secret_key
-from error.invalid_account import InvalidAccountError
-from error.wrong_money import NoMoneyError, MinusMoneyError
+from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError
+from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
 from model.account_admin import PersonalSecuritiesAccount
@@ -49,6 +49,7 @@ class AccountAdminService:
         print(result)
         return result
 
+    # 添加个人证券账户
     @staticmethod
     def add_personal_securities_account(account_data):
         account_information = []
@@ -70,14 +71,16 @@ class AccountAdminService:
             agent=account_data["agent"], \
             agent_id=account_data["agent_id"].encode('utf-8'), \
             authority=account_data["authority"].encode('utf-8'), \
-            status="1"
+            status="ok"
         ))
         print(account_information)
         AccountAdminDao.insert(account_information)
 
+    # 添加法人证券账户
     @staticmethod
     def add_legal_person_securities_account(account_data):
         account_information = []
+        print(account_data)
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
         account_information.append(LegalPersonSecuritiesAccount( \
@@ -147,11 +150,14 @@ class AccountAdminService:
         fund_account = AccountAdminDao.get_fund(fund_account_number)
         if fund_account is None:
             # 找不到账户
-            raise InvalidAccountError()
+            raise NoneAccountError()
         encrypted_password = fund_account.trade_password
         if not bcrypt.checkpw(input_trade_password, encrypted_password.encode("utf-8")):
             # 账户密码不匹配
             raise InvalidAccountError()
+        if fund_account.account_status == "no":
+            # 账户已被冻结
+            raise FrozenAccountError()
         if add_withdraw == 0:
             # 存款
             AccountAdminDao.fund_save_money(operating_num, fund_account)
@@ -172,40 +178,51 @@ class AccountAdminService:
         new_input_password = data["new_password"].encode('utf-8')
         fund_account = AccountAdminDao.get_fund(fund_account_number)
         if fund_account is None:
-            raise InvalidAccountError()
+            # 没有该number的资金账户
+            raise NoneAccountError()
         if trade_withdraw == 0:
             encrypted_password = fund_account.trade_password
         else:
             encrypted_password = fund_account.login_password
         if not bcrypt.checkpw(old_input_password, encrypted_password.encode("utf-8")):
+            # 密码错误
             raise InvalidAccountError()
         password = bcrypt.hashpw(new_input_password, bcrypt.gensalt())
         AccountAdminDao.fund_password(password, fund_account, trade_withdraw)
 
-        # 资金账户销户
-
+    # 资金账户销户
     @staticmethod
     def fund_delete(data):
         id_num_legal_register_num = data["id_num/legal_register_num"]
         security_num = data["security_num"]
-        security_account = AccountAdminDao.get_personal(security_num)
-        if security_account is None:
+        if security_num[0] == 'p':
+            security_account = AccountAdminDao.get_personal(security_num)
+            if security_account is None:
+                # 没有该资金账户
+                raise NoneAccountError()
+            else:
+                if id_num_legal_register_num != security_account.user_id_number:
+                    # 个人证券账户与用户身份证不匹配
+                    raise InvalidAccountError()
+        elif security_num[0] == 'l':
             security_account = AccountAdminDao.get_legal(security_num)
             if security_account is None:
                 # 没有该资金账户
-                raise InvalidAccountError()
+                raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.legal_person_id_number:
                     # 法人证券账户与用户身份证不匹配
                     raise InvalidAccountError()
         else:
-            if id_num_legal_register_num != security_account.user_id_number:
-                # 个人证券账户与用户身份证不匹配
-                raise InvalidAccountError()
+            # account命名问题
+            raise InvalidAccountError()
         fund_account = AccountAdminDao.get_fund_by_security(security_num)
         if fund_account is None:
-            # 个人证券账户与用户身份证不匹配
-            raise InvalidAccountError()
+            # 该证券账户没有绑定资金账户
+            raise NoneAccountError()
+        if fund_account.balance > 0:
+            # 该资金账户尚有存款
+            raise RemainMoneyError()
         AccountAdminDao.fund_delete_one(fund_account)
         AccountAdminDao.security_froze(security_account)
 
@@ -216,6 +233,104 @@ class AccountAdminService:
         security_account = AccountAdminDao.get_personal_by_id(id_num)
         if security_account is None:
             # 身份证号码无效
+            raise NoneAccountError()
+        else:
+            AccountAdminDao.security_froze(security_account)
+
+    # 个人证券账户解冻
+    @staticmethod
+    def personal_security_thaw(data):
+        id_num = data["id_num"]
+        security_account = AccountAdminDao.get_personal_by_id(id_num)
+        if security_account is None:
+            # 身份证号码无效
+            raise NoneAccountError()
+        else:
+            AccountAdminDao.security_thaw(security_account)
+
+    # 法人证券账户冻结
+    @staticmethod
+    def legal_person_security_freeze(data):
+        legal_register_num  = data["legal_register_num"]
+        security_account = AccountAdminDao.get_legal_person_by_id(legal_register_num)
+        if security_account is None:
+            # 身份证号码无效
             raise InvalidAccountError()
         else:
-            AccountAdminDao.security_froze(id_num)
+            AccountAdminDao.security_froze(security_account)
+
+    # 法人证券账户解冻
+    @staticmethod
+    def legal_person_security_thaw(data):
+        legal_register_num  = data["legal_register_num"]
+        security_account = AccountAdminDao.get_legal_person_by_id(legal_register_num)
+        if security_account is None:
+            # 身份证号码无效
+            raise InvalidAccountError()
+        else:
+            AccountAdminDao.security_thaw(security_account)
+
+    # 资金账户冻结
+    @staticmethod
+    def fund_freeze(data):
+        id_num_legal_register_num = data["id_num/legal_register_num"]
+        security_num = data["security_num"]
+        if security_num[0] == 'p':
+            security_account = AccountAdminDao.get_personal(security_num)
+            if security_account is None:
+                # 没有该资金账户
+                raise NoneAccountError()
+            else:
+                if id_num_legal_register_num != security_account.user_id_number:
+                    # 个人证券账户与用户身份证不匹配
+                    raise InvalidAccountError()
+        elif security_num[0] == 'l':
+            security_account = AccountAdminDao.get_legal(security_num)
+            if security_account is None:
+                # 没有该资金账户
+                raise NoneAccountError()
+            else:
+                if id_num_legal_register_num != security_account.legal_person_id_number:
+                    # 法人证券账户与用户身份证不匹配
+                    raise InvalidAccountError()
+        else:
+            # account命名问题
+            raise InvalidAccountError()
+        fund_account = AccountAdminDao.get_fund_by_security(security_num)
+        if fund_account is None:
+            # 该证券账户没有绑定资金账户
+            raise NoneAccountError()
+        AccountAdminDao.fund_froze(fund_account)
+
+    # 资金账户解冻
+    @staticmethod
+    def fund_thaw(data):
+        id_num_legal_register_num = data["id_num/legal_register_num"]
+        security_num = data["security_num"]
+        if security_num[0] == 'p':
+            security_account = AccountAdminDao.get_personal(security_num)
+            if security_account is None:
+                # 没有该资金账户
+                raise NoneAccountError()
+            else:
+                if id_num_legal_register_num != security_account.user_id_number:
+                    # 个人证券账户与用户身份证不匹配
+                    raise InvalidAccountError()
+        elif security_num[0] == 'l':
+            security_account = AccountAdminDao.get_legal(security_num)
+            if security_account is None:
+                # 没有该资金账户
+                raise NoneAccountError()
+            else:
+                if id_num_legal_register_num != security_account.legal_person_id_number:
+                    # 法人证券账户与用户身份证不匹配
+                    raise InvalidAccountError()
+        else:
+            # account命名问题
+            raise InvalidAccountError()
+        fund_account = AccountAdminDao.get_fund_by_security(security_num)
+        if fund_account is None:
+            # 该证券账户没有绑定资金账户
+            raise NoneAccountError()
+        AccountAdminDao.fund_thaw(fund_account)
+    

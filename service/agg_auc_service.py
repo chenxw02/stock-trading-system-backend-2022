@@ -1,8 +1,9 @@
 from dao.agg_auc_dao import AggAucDao
-from model.agg_auc import Instruction
+import datetime
+from model.center_trade import Instruction
 
 
-class AggAucService:
+class AggAuc:
     @staticmethod
     def aggregate_auction():
         s_id = AggAucDao.getstockid()
@@ -76,9 +77,48 @@ class AggAucService:
             a_num = i.actual_number
 
         if(t_num == a_num):
-            flag = 'N'
+            flag = 'T'
         else:
             flag = 'P'
 
         AggAucDao.updateinsttype(i_id, flag)
 
+        # 获取日期时间
+
+    @staticmethod
+    def getnowdata():
+        now = datetime.datetime.now()
+        s = now.strftime('%Y%m%d')
+        data = int(s, 10)
+        return data
+
+    @staticmethod
+    def getnowtime():
+        now = datetime.datetime.now()
+        s = now.strftime('%H%M%S')
+        time = int(s, 10)
+        return time
+
+    # 生成交易结果
+    @staticmethod
+    def createtransres(con_res):
+        b_id = con_res[0]
+        s_id = con_res[1]
+        t_price = con_res[2]
+        t_number = con_res[3]
+        stock_id = AggAucDao.gettransstock(b_id)
+        b_s_flag1 = AggAucDao.gettransflag(b_id)
+        b_s_flag2 = AggAucDao.gettransflag(s_id)
+        a_number1 = AggAucDao.gettransaccount(b_id)
+        a_number2 = AggAucDao.gettransaccount(s_id)
+        t_amount = t_price * t_number
+        t_date = AggAucDao.getnowdata()
+        t_time = AggAucDao.getnowtime()
+        i_id1 = AggAucDao.gettransinstr(b_id)
+        i_id2 = AggAucDao.gettransinstr(s_id)
+        t1_id = AggAucDao.updatetransinfo(stock_id, b_s_flag1, a_number1, t_price,
+                                          t_amount, t_number, t_date, t_time, i_id1)
+        t2_id = AggAucDao.updatetransinfo(stock_id, b_s_flag2, a_number2, t_price,
+                                          t_amount, t_number, t_date, t_time, i_id2)
+        t_id = [t1_id, t2_id]
+        return t_id

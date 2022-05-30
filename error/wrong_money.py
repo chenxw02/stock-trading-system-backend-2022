@@ -4,3 +4,5 @@ class MinusMoneyError(Exception):
 class NoMoneyError(Exception):
     pass
 
+class RemainMoneyError(Exception):
+    pass
