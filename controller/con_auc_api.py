@@ -13,7 +13,8 @@ con_auc_api = Blueprint('con_auc_api', __name__)
 
 @con_auc_api.route("/con_auc", methods=["POST"])
 def con_auc():
-    instruction_id = json.loads(request.get_data(as_text=True))
+    data = json.loads(request.get_data(as_text=True))
     # print(data)
+    instruction_id = data.get("instruction_id")
     ConAucService.con_auc(instruction_id)
     return Result.success(None)
