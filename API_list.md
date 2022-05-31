@@ -198,6 +198,29 @@ response body:
 }
 ```
 
+### PUT /admin
+
+服务端会从token中获取你的身份，只需要传输原密码和新密码。
+
+request body:
+
+```json
+{
+    "password": 123456,
+    "new_password": 1234567
+}
+```
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": null,
+    "message": "success"
+}
+```
+
 ### PUT /stock/status
 
 需要等股票部分写完。

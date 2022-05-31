@@ -1,6 +1,6 @@
 import jwt
 from config import jwt_secret_key
-from invalid_jwt import InvalidJWT
+from error.invalid_jwt import InvalidJWT
 
 
 def decode_token(token):

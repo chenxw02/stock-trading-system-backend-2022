@@ -28,6 +28,7 @@ app.register_blueprint(query_user_api)
 app.register_blueprint(query_user_error)
 app.register_blueprint(trade_api)
 
+
 @app.route('/', methods=["GET", "POST"])
 def hello_world():  # put application's code here
     return 'Hello World!'
