@@ -221,9 +221,26 @@ response body:
 }
 ```
 
+### GET /admin/permission
+
+获取当前登录管理员的可管理股票stock_id。
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": [
+        "a111",
+        "a112"
+    ],
+    "message": "success"
+}
+```
+
 ### PUT /stock/status
 
-需要等股票部分写完。
+
 
 ### 待续
 

@@ -3,6 +3,13 @@ create table admin (
     password varchar(200) not null,
     primary key (admin_id)
 );
+create table admin_permission (
+    admin_id varchar(20) not null,
+    stock_id varchar(20) not null,
+    primary key (admin_id, stock_id),
+    foreign key (admin_id) REFERENCES admin(admin_id),
+    foreign key (stock_id) REFERENCES stock(stock_id)
+);
 create table administrator_account (
     administrator_id varchar(20) not null,
     administrator_password varchar(200) not null,

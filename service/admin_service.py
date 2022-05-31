@@ -56,3 +56,11 @@ class AdminService:
         # 原密码正确，则继续修改密码
         new_encrypted_password = bcrypt.hashpw(str(new_password).encode('utf-8'), bcrypt.gensalt())
         AdminDao.update(admin_id, new_encrypted_password)
+
+    @staticmethod
+    def get_permissions(admin_id):
+        permissions = AdminDao.get_permissions(admin_id)
+        stock_ids = []
+        for permission in permissions:
+            stock_ids.append(permission.stock_id)
+        return stock_ids
