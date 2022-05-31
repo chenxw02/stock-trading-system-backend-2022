@@ -12,3 +12,9 @@ class AdminDao:
     def get(admin_id):
         admin = Admin.query.get(admin_id)
         return admin
+
+    @staticmethod
+    def update(admin_id, new_password):
+        admin = Admin.query.get(admin_id)
+        admin.password = new_password
+        db.session.commit()

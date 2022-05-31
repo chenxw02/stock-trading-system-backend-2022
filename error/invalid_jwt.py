@@ -1,0 +1,2 @@
+class InvalidJWT(Exception):
+    pass

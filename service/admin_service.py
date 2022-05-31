@@ -41,3 +41,18 @@ class AdminService:
             # print(encrypted_password)
             admins.append(Admin(admin_id=admin_data["admin_id"], password=encrypted_password))
         AdminDao.insert(admins)
+
+    @staticmethod
+    def change_password(admin_id, password, new_password):
+        # print(admin_id)
+        # print(password)
+        # print(new_password)
+        admin = AdminDao.get(admin_id)
+        if admin is None:
+            raise InvalidAccountError()
+        encrypted_password = admin.password
+        if not bcrypt.checkpw(str(password).encode("utf-8"), encrypted_password.encode("utf-8")):
+            raise InvalidAccountError()
+        # 原密码正确，则继续修改密码
+        new_encrypted_password = bcrypt.hashpw(str(new_password).encode('utf-8'), bcrypt.gensalt())
+        AdminDao.update(admin_id, new_encrypted_password)
