@@ -24,7 +24,7 @@ def register():
 
 @account_admin_api.route("/account_admin/show_deal", methods=["POST"])
 def show_deal():
-    return AccountAdminService.show_deal()
+    return Result.success(AccountAdminService.show_deal())
 
 # 个人证券账户开户
 @account_admin_api.route("/account_admin/add_personal_securities_account", methods=["POST"])
@@ -112,3 +112,8 @@ def fund_thaw():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.fund_thaw(data)
     return Result.success(None)
+
+# 重新开户（证券账户）
+@account_admin_api.route("/account_admin/re_add_personal_securities_account", methods=["POST"])
+def re_add_personal_securities_account():
+    data = json.loads(request.get_data(as_text=True))
