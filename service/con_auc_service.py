@@ -3,9 +3,21 @@ import datetime
 
 class ConAuc:
     #指令预处理
-    #
-    #
-    #
+    @staticmethod
+    def continue_instruction_pretreatment(ins_id):
+        # 检测股票状态
+        ins = ConAucDao.getins(ins_id)  # 获取指令信息
+        s = ConAucDao.getstock(ins)  # 获取股票信息
+        if s.stock_status == 'F':  # 股票状态为'F'则返回
+            ConAucDao.setexp(ins)  # 股票异常，设置为过期指令   ！！！！
+            # return -1                      #股票状态异常，无法交易
+
+        # 判断涨跌幅
+        k = ConAucDao.getyesterdayk(s.stock_id)  # 获取昨日K值表
+        if ins.target_price > (k.end_price) * (1 + s.rise_threshold) or ins.target_price < (k.end_price) * (
+                1 - s.fall_threshold):
+            ConAucDao.setexp(ins.instruction_id)  # 指令设置为过期
+            # return -1                                 #指令出价超过涨跌幅，无法交易
     
     #连续竞价
     @staticmethod
@@ -13,7 +25,7 @@ class ConAuc:
         buy = ConAucDao.getbuyinstr(inst_id)
         sell = ConAucDao.getsellinstr(inst_id)
         if buy.target_price < sell.target_price:
-            return -1    ##无法交易标志，没想好
+            return -1    ##无法交易标志
         else:
             transaction_price = 0.5 * (buy.target_price + sell.target_price)
             buyrest = buy.target_number - buy.actual_number

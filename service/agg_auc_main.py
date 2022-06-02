@@ -9,7 +9,7 @@ class AggAucService:
     def agg_auc(inst_id):
         # 预处理
         AggAuc.aggregate_instruction_pretreatment()
-        # 连续竞价
+        # 集合竞价
         agg_res = AggAuc.aggregate_auction()
         # 生成结果
         for i in range(0, len(agg_res)):
