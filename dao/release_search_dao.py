@@ -46,7 +46,7 @@ class ReleaseSearchDao:
                     payload.append(content)
                     content = {}
                 break
-            if (len(ret2) == 0 or len(ret3) == 0):
+            if (len(ret2) == 0):
                 content = {'stock_id': i[0], 'stock_name': i[1], 'start_price': '', 'end_price': '', 'highest_price': '', 'lowest_price': '', 'buy_sell_flag': '', 'transaction_price': '', 'transaction_amount': '', 'transaction_number': '', 'transaction_date': '', 'transaction_time': ''}
                 if (len(content)==0):
                     continue
