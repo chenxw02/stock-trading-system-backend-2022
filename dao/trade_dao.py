@@ -1,8 +1,8 @@
 from exts import db
 from model.account_admin import FundAccount
 from model.account_admin import OwnStock
-from model.release_search import Stock
-from model.release_search import Transaction
+from model.center_trade import Stock
+from model.center_trade import Transaction
 from sqlalchemy import and_
 from sqlalchemy import func
 import datetime

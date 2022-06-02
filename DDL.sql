@@ -94,7 +94,7 @@ create table stock
 );
 create table instruction
 (
-    instruction_id      varchar(20) not null,
+    instruction_id      int         not null,
     stock_id            varchar(20) not null,
     fund_account_number varchar(20) not null,
     buy_sell_flag       char(1)     not null,
@@ -108,7 +108,8 @@ create table instruction
     foreign key (stock_id) references stock (stock_id),
     foreign key (fund_account_number) references fund_account (fund_account_number),
     check (buy_sell_flag in ('B', 'S')),
-    check (instruction_state in ('N', 'P', 'T', 'E')),
+    check (instruction_state in ('N', 'P', 'T', 'E'))
+    /* N是未成交，P是部分成交，T是完全成交，E是过期失效 */
 );
 create table k
 (
@@ -122,7 +123,7 @@ create table k
     trade_amount  double      not null,
     date          int         not null,
     primary key (k_id),
-    foreign key stock_id references stock(stock_id)
+    foreign key (stock_id) references stock(stock_id)
 );
 create table transaction
 (
@@ -137,9 +138,9 @@ create table transaction
     transaction_date    int         not null,
     transaction_time    int         not null,
     primary key (transaction_id),
-    foreign key stock_id references stock(stock_id),
-    foreign key instruction_id references instruction(instruction_id),
-    foreign key fund_account_number references fund_account(fund_account_number),
+    foreign key (stock_id) references stock(stock_id),
+    foreign key (instruction_id) references instruction(instruction_id),
+    foreign key (fund_account_number) references fund_account(fund_account_number),
     check (buy_sell_flag in ('B', 'S'))
 );
 create table queryuser

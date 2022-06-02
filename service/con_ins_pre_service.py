@@ -23,4 +23,4 @@ class InsPre:
         k = ConInsPreDao.getyesterdayk(s.stock_id)     #获取昨日K值表
         if ins.target_price>(k.end_price)*(1+s.rise_threshold) or ins.target_price<(k.end_price)*(1-s.fall_threshold):
             ConInsPreDao.setexp(ins.instruction_id)    #指令设置为过期
-            return -1                               #指令出价超过涨跌幅，无法交易
+            return -1                                  #指令出价超过涨跌幅，无法交易

@@ -1,6 +1,6 @@
 from dao.release_search_dao import ReleaseSearchDao
-from model.release_search import Stock
-from model.release_search import K
+from model.center_trade import Stock
+from model.center_trade import K
 
 class ReleaseSearchService:
     @staticmethod

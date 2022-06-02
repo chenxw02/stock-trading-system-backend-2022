@@ -1,7 +1,8 @@
+from exts import db
 from model.center_trade import K
 from model.center_trade import Stock
-from model.center_trade import Transaction
-from sqlalchemy import and_
+from model.center_trade import Instruction
+
 import time
 
 class AggInsPreDao:
@@ -23,13 +24,13 @@ class AggInsPreDao:
         localtime = time.asctime(time.localtime(time.time()))
         localtime = time.strftime("%Y%m%d", time.localtime())
         inttime = int(localtime)
-        tmpk = K.query.filter(_and(K.stock_id == i.stock_id, K.date < inttime))
-        tmpk = tmpk.query.order_by(desc("date")).first()
+        tmpk = K.query.filter(K.stock_id == stock_id, K.date < inttime)
+        tmpk = tmpk.query.order_by(db.desc(tmpk.date)).first()
         return tmpk
 
     #建立K值表
     @staticmethod
-    def createktable(self):
+    def createktable():
         localtime = time.asctime(time.localtime(time.time()))
         localtime = time.strftime("%Y%m%d", time.localtime())
         inttime = int(localtime)
@@ -37,17 +38,17 @@ class AggInsPreDao:
         for i in sto:
             tmpkid = localtime+i.stock_id
             tmpk = K.query.filter(K.stock_id == i.stock_id)
-            tmpk = tmpk.query.order_by(desc("date")).first()
+            tmpk = tmpk.query.order_by(db.desc(tmpk.date)).first()
             k = K()
             k.k_id = tmpkid
             k.stock_id = i.stock_id
             k.start_price = tmpk.start_price
-            k.end_price = tmp.k.end_price
+            k.end_price = tmpk.end_price
             k.trade_number = 0
             k.trade_amount = 0
             k.date = inttime
-            session.add(k)
-            session.commit()
+            db.session.add(k)
+            db.session.commit()
 
     #获取股票信息
     @staticmethod
@@ -59,14 +60,21 @@ class AggInsPreDao:
     @staticmethod
     def getins(ins_id):
         ins = Instruction.query.filter(Instruction.instruction.id == ins_id)
-        return
+        return ins
 
     #获取今日指令
     @staticmethod
     def gettodayins():
-        localtime = time.asctime(time.localtime(time.time()))
+        #localtime = time.asctime(time.localtime(time.time()))
         localtime = time.strftime("%Y%m%d", time.localtime())
         inttime = int(localtime)
         inttime = inttime*1000000
         ins = Instruction.query.filter(Instruction.time > inttime)
         return ins
+
+    #设置指令过期
+    @staticmethod
+    def setexp(ins_id):
+        ins = Instruction.query.filter(Instruction.instruction_id == ins_id)
+        ins.instruction_state = "E"
+        db.session.commit()

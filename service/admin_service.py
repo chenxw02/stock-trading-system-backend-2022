@@ -60,7 +60,4 @@ class AdminService:
     @staticmethod
     def get_permissions(admin_id):
         permissions = AdminDao.get_permissions(admin_id)
-        stock_ids = []
-        for permission in permissions:
-            stock_ids.append(permission.stock_id)
-        return stock_ids
+        return permissions
