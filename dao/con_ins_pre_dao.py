@@ -13,9 +13,9 @@ class ConInsPreDao:
         localtime = time.asctime(time.localtime(time.time()))
         localtime = time.strftime("%Y%m%d", time.localtime())
         inttime = int(localtime)
-        tmpk = K.query.filter(K.stock_id == stock_id, K.date < inttime)
-        tmpk = tmpk.query.order_by(db.desc(tmpk.date)).first()
-        return tmpk
+        tmp_k = K.query.filter(K.stock_id == stock_id, K.date < inttime)
+        k = tmp_k.query.order_by(db.desc(tmp_k.date)).first()
+        return k
 
     #获取股票信息
     @staticmethod

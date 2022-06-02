@@ -4,14 +4,11 @@ from model.center_trade import K
 from model.center_trade import Stock
 import time
 
-class InsPreDao:
-
-    #处理过期指令
+class AggInsPreService:
     @staticmethod
     def deal_expired_instruction():         #处理过期指令
         AggInsPreDao.dealexpins()
 
-    #创建K值表
     @staticmethod
     def create_k_table():       #创建k值表
         AggInsPreDao.createktable()
@@ -24,9 +21,9 @@ class InsPreDao:
         inttime = int(localtime)
         instr = AggInsPreDao.gettodayins()
         for i in instr:
-            s = AggInsPreDao.getstock(i)         #获取股票信息
-            if s.stock_status=='F':              #股票状态为'F'则返回
-                AggInsPreDao.setexp(i.instruction_id)            #设置指令为过期指令
+            s = AggInsPreDao.getstock(i)                        #获取股票信息
+            if s.stock_status=='F':                             #股票状态为'F',无法交易
+                AggInsPreDao.setexp(i.instruction_id)           #设置指令为过期指令
 
     #判断涨跌幅
     @staticmethod
