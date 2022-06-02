@@ -44,3 +44,15 @@ def set_threshold():
         raise InvalidJWT
     AdminStockService.set_threshold(data["stock_id"], data["rise_threshold"], data["fall_threshold"])
     return Result.success(None)
+
+@admin_stock_api.route("/admin/latest_transaction", methods=["GET"])
+def get_latest_transaction():
+    data = json.loads(request.get_data(as_text=True))
+    token = request.headers.get('Authorization')
+    info = decode_token(token)
+    admin_id = info["admin_id"]
+    auth_type = info["type"]
+    if auth_type != "admin":
+        raise InvalidJWT
+    latest_transaction = AdminStockService.get_latest_transaction(data["stock_id"])
+    return Result.success(latest_transaction)

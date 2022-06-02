@@ -293,5 +293,30 @@ response body:
 }
 ```
 
+### GET /admin/latest_transaction
+
+获取股票最新交易的数量和价格。
+
+request body:
+
+```json
+{
+    "stock_id": "a111"
+}
+```
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": {
+        "latest_amount": 2,
+        "latest_price": 12.11
+    },
+    "message": "success"
+}
+```
+
 ### 
 

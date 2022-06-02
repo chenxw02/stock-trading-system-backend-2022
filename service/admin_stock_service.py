@@ -14,3 +14,11 @@ class AdminStockService:
     @staticmethod
     def set_threshold(stock_id, rise_threshold, fall_threshold):
         AdminStockDao.set_threshold(stock_id, rise_threshold, fall_threshold)
+
+    @staticmethod
+    def get_latest_transaction(stock_id):
+        latest_transaction = AdminStockDao.get_latest_transaction(stock_id)
+        return {
+            "latest_amount": latest_transaction.transaction_number,
+            "latest_price": latest_transaction.transaction_price
+        }

@@ -2,6 +2,8 @@ from exts import db
 from model.admin import Admin
 from model.admin_permission import AdminPermission
 from model.center_trade import Stock
+from model.center_trade import Transaction
+from sqlalchemy import func
 
 
 class AdminStockDao:
@@ -30,3 +32,11 @@ class AdminStockDao:
         stock.rise_threshold = rise_threshold
         stock.fall_threshold = fall_threshold
         db.session.commit()
+
+    @staticmethod
+    def get_latest_transaction(stock_id):
+        latest_row = db.session.query(func.max(Transaction.transaction_timestamp).label("latest_time")).filter(Transaction.stock_id == stock_id).one()
+        latest_time = latest_row.latest_time
+        latest_transaction = Transaction.query.filter_by(transaction_timestamp=latest_time).first()
+        return latest_transaction
+
