@@ -87,7 +87,7 @@ class AccountAdminService:
         print(account_data)
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
-        no_l_account_number = account_data["l_account_number"].encode('utf-8')
+        no_l_account_number = "l-" + account_data["l_account_number"]
         account_information.append(LegalPersonSecuritiesAccount( \
             l_account_number=no_l_account_number,\
             password=encrypted_password, \
