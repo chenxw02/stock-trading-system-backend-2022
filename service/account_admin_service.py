@@ -2,7 +2,7 @@ import jwt
 import time
 import bcrypt
 from config import jwt_secret_key
-from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError
+from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ContationNotMeetError
 from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -59,13 +59,14 @@ class AccountAdminService:
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
         no_p_account_number = "p_" + account_data["p_account_number"]
-        print(no_p_account_number)
+        temp_registration_date = int("".join(account_data["registration_date"].split('-')))
+        print(temp_registration_date)
         account_information.append(PersonalSecuritiesAccount( \
             p_account_number=no_p_account_number,\
             password=encrypted_password, \
             user_name=account_data["user_name"].encode('utf-8'), \
             user_gender=account_data["user_gender"].encode('utf-8'), \
-            registration_date=account_data["registration_date"], \
+            registration_date=temp_registration_date, \
             user_id_number=account_data["user_id_number"].encode('utf-8'), \
             user_address=account_data["user_address"].encode('utf-8'), \
             user_job=account_data["user_job"].encode('utf-8'), \
@@ -348,7 +349,7 @@ class AccountAdminService:
         if result is None:
             raise NoneAccountError()
         if result.status == "ok" :
-            raise FrozenAccountError()
+            raise ContationNotMeetError()
         AccountAdminDao.re_add_personal_securities_account(result,data["password"],data["p_account_number"])
 
     @staticmethod
@@ -359,7 +360,7 @@ class AccountAdminService:
         if result is None:
             raise NoneAccountError()
         if result.status == "ok":
-            raise FrozenAccountError()
+            raise ContationNotMeetError()
         AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], data["l_account_number"])
 
 

@@ -6,3 +6,6 @@ class NoneAccountError(Exception):
 
 class FrozenAccountError(Exception):
     pass
+
+class ContationNotMeetError(Exception):
+    pass

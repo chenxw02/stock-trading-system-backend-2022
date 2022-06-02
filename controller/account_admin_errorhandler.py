@@ -4,6 +4,7 @@ from controller.account_admin_api import account_admin_api
 from error.invalid_account import InvalidAccountError
 from error.invalid_account import NoneAccountError
 from error.invalid_account import FrozenAccountError
+from error.invalid_account import ContationNotMeetError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
 from error.wrong_money import RemainMoneyError
@@ -15,19 +16,22 @@ prefix = "10"
 
 @account_admin_api.errorhandler(InvalidAccountError)
 def invalid_account_error(error):
-    return Result.error(prefix+"1", "账号密码错误")
+    return Result.error(prefix + "1", "账号密码错误")
+
 
 @account_admin_api.errorhandler(NoneAccountError)
 def invalid_account_error(error):
-    return Result.error(prefix+"1", "未找到账户")
+    return Result.error(prefix + "1", "未找到账户")
+
 
 @account_admin_api.errorhandler(FrozenAccountError)
 def invalid_account_error(error):
-    return Result.error(prefix+"1", "该账户已冻结")
+    return Result.error(prefix + "1", "该账户已冻结")
+
 
 @account_admin_api.errorhandler(Exception)
 def invalid_account_error(error):
-    return Result.error(prefix+"0", "未知错误，请联系管理员")
+    return Result.error(prefix + "0", "未知错误，请联系管理员")
 
 
 @account_admin_api.errorhandler(MinusMoneyError)
@@ -39,6 +43,12 @@ def wrong_money_error(error):
 def wrong_money_error(error):
     return Result.error(prefix + "1", "资金不足")
 
+
 @account_admin_api.errorhandler(RemainMoneyError)
 def wrong_money_error(error):
     return Result.error(prefix + "1", "该资金账户尚有存款")
+
+
+@account_admin_api.errorhandler(ContationNotMeetError)
+def invalid_account_error(error):
+    return Result.error(prefix + "1", "该账户不满足重新开户条件")
