@@ -24,7 +24,7 @@ def register():
 
 @account_admin_api.route("/account_admin/show_deal", methods=["POST"])
 def show_deal():
-    return AccountAdminService.show_deal()
+    return Result.success(AccountAdminService.show_deal())
 
 # 个人证券账户开户
 @account_admin_api.route("/account_admin/add_personal_securities_account", methods=["POST"])

@@ -38,13 +38,15 @@ class AccountAdminService:
 
     @staticmethod
     def show_deal():
-        result = {}
+        result = []
         temp_deal = AccountAdminDao.get_deals()
+        print(type(temp_deal))
         for temp in temp_deal:
-            # result[temp.deal_id] = temp.status
-            result["deal_id"] = temp.deal_id
-            result["status"] = temp.status
-            result["person_id"] = temp.person_id
+            temp_result = {}
+            temp_result["deal_id"] = temp.deal_id
+            temp_result["status"] = temp.status
+            temp_result["person_id"] = temp.person_id
+            result.append(temp_result)
         print("dxp:")
         print(result)
         return result
@@ -56,8 +58,10 @@ class AccountAdminService:
         print(account_data)
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        no_p_account_number = "p_" + account_data["p_account_number"]
+        print(no_p_account_number)
         account_information.append(PersonalSecuritiesAccount( \
-            p_account_number=account_data["p_account_number"].encode('utf-8'), \
+            p_account_number=no_p_account_number,\
             password=encrypted_password, \
             user_name=account_data["user_name"].encode('utf-8'), \
             user_gender=account_data["user_gender"].encode('utf-8'), \
@@ -83,8 +87,9 @@ class AccountAdminService:
         print(account_data)
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        no_l_account_number = account_data["l_account_number"].encode('utf-8')
         account_information.append(LegalPersonSecuritiesAccount( \
-            l_account_number=account_data["l_account_number"].encode('utf-8'), \
+            l_account_number=no_l_account_number,\
             password=encrypted_password, \
             legal_person_registration_number=account_data["legal_person_registration_number"].encode('utf-8'), \
             business_license_number=account_data["business_license_number"].encode('utf-8'), \
