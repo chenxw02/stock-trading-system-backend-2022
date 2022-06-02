@@ -206,8 +206,8 @@ request body:
 
 ```json
 {
-    "password": 123456,
-    "new_password": 1234567
+    "password": "123456",
+    "new_password": "1234567"
 }
 ```
 
@@ -223,7 +223,7 @@ response body:
 
 ### GET /admin/permission
 
-获取当前登录管理员的可管理股票stock_id。
+获取当前登录管理员的可管理股票列表。
 
 response body:
 
@@ -231,8 +231,16 @@ response body:
 {
     "code": 0,
     "data": [
-        "a111",
-        "a112"
+        {
+            "status": "T",
+            "stock_id": "a111",
+            "stock_name": "test1"
+        },
+        {
+            "status": "F",
+            "stock_id": "a112",
+            "stock_name": "test2"
+        }
     ],
     "message": "success"
 }
