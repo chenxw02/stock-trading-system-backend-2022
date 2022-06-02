@@ -125,3 +125,15 @@ class AccountAdminDao:
     def get_legal_person_by_id(legal_register_num):
         security_account = LegalPersonSecuritiesAccount.query.filter_by(legal_person_registration_number=legal_register_num).first()
         return security_account
+
+    @staticmethod
+    def re_add_personal_securities_account(old_class, new_password, new_p_number):
+        old_class.password = new_password
+        old_class.p_account_number = new_p_number
+        db.session.commit()
+
+    @staticmethod
+    def re_add_legal_person_securities_account(old_class, new_password, new_l_number):
+        old_class.password = new_password
+        old_class.l_account_number = new_l_number
+        db.session.commit()

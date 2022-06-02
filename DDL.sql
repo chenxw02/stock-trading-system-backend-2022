@@ -59,6 +59,7 @@ create table fund_account (
     login_password varchar(200) not null,
     account_status varchar(4) not null,
     securities_account_number varchar(20) not null,
+    check account_status in ("ok","no"),
     primary key (fund_account_number)
 );
 create table own_stock (
