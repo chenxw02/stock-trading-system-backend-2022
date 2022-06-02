@@ -338,4 +338,31 @@ class AccountAdminService:
             # 该证券账户没有绑定资金账户
             raise NoneAccountError()
         AccountAdminDao.fund_thaw(fund_account)
+
+
+    @staticmethod
+    def re_add_personal_securities_account(data):
+        id_num = data["user_id_number"]
+        result = AccountAdminDao.get_personal_by_id(id_num)
+        # 没有对应的账号
+        if result is None:
+            raise NoneAccountError()
+        if result.status == "ok" :
+            raise FrozenAccountError()
+        AccountAdminDao.re_add_personal_securities_account(result,data["password"],data["p_account_number"])
+
+    @staticmethod
+    def re_add_legal_person_securities_account(data):
+        id_num = data["user_id_number"]
+        result = AccountAdminDao.get_legal_person_by_id(id_num)
+        # 没有对应的账号
+        if result is None:
+            raise NoneAccountError()
+        if result.status == "ok":
+            raise FrozenAccountError()
+        AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], data["p_account_number"])
+
+
+
+
     
