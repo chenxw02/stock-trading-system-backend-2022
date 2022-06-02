@@ -2,7 +2,6 @@ from exts import db
 from model.center_trade import Instruction
 from model.center_trade import K
 from model.center_trade import Stock
-from model.center_trade import Transaction
 from sqlalchemy import and_
 import time
 
@@ -14,8 +13,8 @@ class ConInsPreDao:
         localtime = time.asctime(time.localtime(time.time()))
         localtime = time.strftime("%Y%m%d", time.localtime())
         inttime = int(localtime)
-        tmpk = K.query.filter(_and(K.stock_id == i.stock_id, K.date < inttime))
-        tmpk = tmpk.query.order_by(desc("date")).first()
+        tmpk = K.query.filter(K.stock_id == stock_id, K.date < inttime)
+        tmpk = tmpk.query.order_by(db.desc(tmpk.date)).first()
         return tmpk
 
     #获取股票信息
@@ -28,11 +27,11 @@ class ConInsPreDao:
     @staticmethod
     def getins(ins_id):
         ins = Instruction.query.filter(Instruction.instruction.id == ins_id)
-        return
+        return ins
 
     #设置不在涨跌幅阈值内的指令为过期指令
     @staticmethod
     def setexp(ins_id):
         ins = Instruction.query.filter(Instruction.instruction_id == ins_id)
-        ins.instruction_state == "E"
+        ins.instruction_state = "E"
         db.session.commit()
