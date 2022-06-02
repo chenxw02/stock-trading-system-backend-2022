@@ -2,7 +2,7 @@ from exts import db
 from model.admin import Admin
 from model.admin_permission import AdminPermission
 from model.center_trade import Stock
-from model.center_trade import Transaction
+from model.center_trade import Transaction, Instruction
 from sqlalchemy import func
 
 
@@ -39,4 +39,9 @@ class AdminStockDao:
         latest_time = latest_row.latest_time
         latest_transaction = Transaction.query.filter_by(transaction_timestamp=latest_time).first()
         return latest_transaction
+
+    @staticmethod
+    def get_instructions(buy_or_sell, stock_id):
+        instructions = Instruction.query.filter_by(stock_id=stock_id, buy_sell_flag=buy_or_sell).all()
+        return instructions
 

@@ -56,3 +56,17 @@ def get_latest_transaction():
         raise InvalidJWT
     latest_transaction = AdminStockService.get_latest_transaction(data["stock_id"])
     return Result.success(latest_transaction)
+
+@admin_stock_api.route("/admin/instruction", methods=["GET"])
+def get_instructions():
+    data = json.loads(request.get_data(as_text=True))
+    token = request.headers.get('Authorization')
+    info = decode_token(token)
+    admin_id = info["admin_id"]
+    auth_type = info["type"]
+    if auth_type != "admin":
+        raise InvalidJWT
+    instructions = AdminStockService.get_instructions(data["buy_or_sell"], data["stock_id"])
+    return Result.success(instructions)
+
+

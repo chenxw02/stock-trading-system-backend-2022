@@ -318,5 +318,44 @@ response body:
 }
 ```
 
-### 
+### GET /admin/instruction
 
+获取股票交易指令。B表示买，S表示卖
+
+request body:
+
+```json
+{
+    "buy_or_sell": "B",
+    "stock_id": "a111"
+}
+```
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": [
+        {
+            "actual_number": 0,
+            "buy_sell_flag": "B",
+            "fund_account_number": "a_12345678",
+            "instruction_id": "1",
+            "instruction_state": "N",
+            "stock_id": "a111",
+            "target_number": 1,
+            "target_price": 1.0,
+            "time": 1,
+            "total_amount": 0.0
+        }
+    ],
+    "message": "success"
+}
+```
+
+### 错误代码
+
+若错误代码为102，请跳转回登录界面。其余错误代码只需要alert即可。
+
+正常代码为0。

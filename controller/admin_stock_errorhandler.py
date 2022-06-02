@@ -12,7 +12,7 @@ prefix = "10"
 
 @admin_stock_api.errorhandler(InvalidJWT)
 def invalid_jwt_error(error):
-    return Result.error(prefix + "1", "请重新登陆")
+    return Result.error(prefix + "2", "请重新登陆")
 
 
 @admin_stock_api.errorhandler(Exception)

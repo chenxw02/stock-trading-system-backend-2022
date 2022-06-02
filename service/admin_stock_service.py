@@ -22,3 +22,22 @@ class AdminStockService:
             "latest_amount": latest_transaction.transaction_number,
             "latest_price": latest_transaction.transaction_price
         }
+
+    @staticmethod
+    def get_instructions(buy_or_sell, stock_id):
+        result = []
+        instructions = AdminStockDao.get_instructions(buy_or_sell, stock_id)
+        for instruction in instructions:
+            result.append({
+                "instruction_id": instruction.instruction_id,
+                "stock_id": instruction.stock_id,
+                "fund_account_number": instruction.fund_account_number,
+                "buy_sell_flag": instruction.buy_sell_flag,
+                "target_number": instruction.target_number,
+                "actual_number": instruction.actual_number,
+                "target_price": instruction.target_price,
+                "time": instruction.time,
+                "instruction_state": instruction.instruction_state,
+                "total_amount": instruction.total_amount
+            })
+        return result
