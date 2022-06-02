@@ -2,7 +2,8 @@ import jwt
 import time
 import bcrypt
 from config import jwt_secret_key
-from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ContationNotMeetError
+from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ContationNotMeetError, \
+    NoSecuritiesError
 from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -62,7 +63,7 @@ class AccountAdminService:
         temp_registration_date = int("".join(account_data["registration_date"].split('-')))
         print(temp_registration_date)
         account_information.append(PersonalSecuritiesAccount( \
-            p_account_number=no_p_account_number,\
+            p_account_number=no_p_account_number, \
             password=encrypted_password, \
             user_name=account_data["user_name"].encode('utf-8'), \
             user_gender=account_data["user_gender"].encode('utf-8'), \
@@ -88,9 +89,9 @@ class AccountAdminService:
         print(account_data)
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
-        no_l_account_number = "l-" + account_data["l_account_number"]
+        no_l_account_number = "l_" + account_data["l_account_number"]
         account_information.append(LegalPersonSecuritiesAccount( \
-            l_account_number=no_l_account_number,\
+            l_account_number=no_l_account_number, \
             password=encrypted_password, \
             legal_person_registration_number=account_data["legal_person_registration_number"].encode('utf-8'), \
             business_license_number=account_data["business_license_number"].encode('utf-8'), \
@@ -124,9 +125,15 @@ class AccountAdminService:
     def add_fund_account(fund_account_data):
         account_information = []
         securities_account_number = fund_account_data["securities_account_number"]
+        label = fund_account_data["label"]
+        if label == 0:
+            securities_account_number = "l_" + securities_account_number
+        else:
+            securities_account_number = "p_" + securities_account_number
+
         print(securities_account_number)
-        if AccountAdminDao.check_fund_account(securities_account_number) == 0 :
-            return "failed"
+        if AccountAdminDao.check_fund_account(securities_account_number) == 0:
+            raise NoSecuritiesError()
         trade_password = fund_account_data["trade_password"].encode('utf-8')
         encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
         login_password = fund_account_data["login_password"].encode('utf-8')
@@ -141,7 +148,6 @@ class AccountAdminService:
                                                    "securities_account_number"]))
         AccountAdminDao.insert(account_information)
         print(account_information)
-        return "ok"
 
     # 资金账户存取款
     @staticmethod
@@ -201,6 +207,12 @@ class AccountAdminService:
     def fund_delete(data):
         id_num_legal_register_num = data["id_num/legal_register_num"]
         security_num = data["security_num"]
+        label = data["label"]
+        if label == 0:
+            security_num = "l_" + security_num
+        else:
+            security_num = "p_" + security_num
+
         if security_num[0] == 'p':
             security_account = AccountAdminDao.get_personal(security_num)
             if security_account is None:
@@ -257,7 +269,7 @@ class AccountAdminService:
     # 法人证券账户冻结
     @staticmethod
     def legal_person_security_freeze(data):
-        legal_register_num  = data["legal_register_num"]
+        legal_register_num = data["legal_register_num"]
         security_account = AccountAdminDao.get_legal_person_by_id(legal_register_num)
         if security_account is None:
             # 身份证号码无效
@@ -268,7 +280,7 @@ class AccountAdminService:
     # 法人证券账户解冻
     @staticmethod
     def legal_person_security_thaw(data):
-        legal_register_num  = data["legal_register_num"]
+        legal_register_num = data["legal_register_num"]
         security_account = AccountAdminDao.get_legal_person_by_id(legal_register_num)
         if security_account is None:
             # 身份证号码无效
@@ -340,7 +352,6 @@ class AccountAdminService:
             raise NoneAccountError()
         AccountAdminDao.fund_thaw(fund_account)
 
-
     @staticmethod
     def re_add_personal_securities_account(data):
         id_num = data["user_id_number"]
@@ -348,9 +359,9 @@ class AccountAdminService:
         # 没有对应的账号
         if result is None:
             raise NoneAccountError()
-        if result.status == "ok" :
+        if result.status == "ok":
             raise ContationNotMeetError()
-        AccountAdminDao.re_add_personal_securities_account(result,data["password"],data["p_account_number"])
+        AccountAdminDao.re_add_personal_securities_account(result, data["password"], data["p_account_number"])
 
     @staticmethod
     def re_add_legal_person_securities_account(data):
@@ -362,8 +373,3 @@ class AccountAdminService:
         if result.status == "ok":
             raise ContationNotMeetError()
         AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], data["l_account_number"])
-
-
-
-
-    

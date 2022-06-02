@@ -5,6 +5,7 @@ from error.invalid_account import InvalidAccountError
 from error.invalid_account import NoneAccountError
 from error.invalid_account import FrozenAccountError
 from error.invalid_account import ContationNotMeetError
+from error.invalid_account import NoSecuritiesError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
 from error.wrong_money import RemainMoneyError
@@ -52,3 +53,8 @@ def wrong_money_error(error):
 @account_admin_api.errorhandler(ContationNotMeetError)
 def invalid_account_error(error):
     return Result.error(prefix + "1", "该账户不满足重新开户条件")
+
+
+@account_admin_api.errorhandler(NoSecuritiesError)
+def invalid_account_error(error):
+    return Result.error(prefix + "1", "对应证券账户不存在")
