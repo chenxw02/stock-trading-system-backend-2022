@@ -269,5 +269,29 @@ response body:
 }
 ```
 
-### 待续
+### PUT /admin/stock_threshold
+
+修改股票涨跌幅阈值。
+
+request body:
+
+```json
+{
+    "stock_id": "a111",
+    "rise_threshold": 10,
+    "fall_threshold": 10
+}
+```
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": null,
+    "message": "success"
+}
+```
+
+### 
 

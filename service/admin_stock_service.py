@@ -10,3 +10,7 @@ class AdminStockService:
     @staticmethod
     def set_status(stock_id, stock_status):
         AdminStockDao.set_status(stock_id, stock_status)
+
+    @staticmethod
+    def set_threshold(stock_id, rise_threshold, fall_threshold):
+        AdminStockDao.set_threshold(stock_id, rise_threshold, fall_threshold)
