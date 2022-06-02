@@ -377,7 +377,9 @@ class AccountAdminService:
         if result.status == "ok":
             raise ConditionNotMeetError()
         temp_new_number = "p_" + data["p_account_number"]
-        AccountAdminDao.re_add_personal_securities_account(result, data["password"], temp_new_number)
+        password = data["password"].encode('utf-8')
+        encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        AccountAdminDao.re_add_personal_securities_account(result, encrypted_password, temp_new_number)
 
     # 重新开户（法人证券账户）
     @staticmethod
@@ -390,7 +392,9 @@ class AccountAdminService:
         if result.status == "ok":
             raise ConditionNotMeetError()
         temp_new_number = "l_" + data["l_account_number"]
-        AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], temp_new_number)
+        password = data["password"].encode('utf-8')
+        encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        AccountAdminDao.re_add_legal_person_securities_account(result, encrypted_password, temp_new_number)
 
     # 证券账户销户
     @staticmethod
