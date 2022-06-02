@@ -1,8 +1,10 @@
 from flask import Flask
 from controller.demo_api import demo_api
 from controller.admin_api import admin_api
-from controller.account_admin_api import account_admin_api
 from controller.admin_errorhandler import admin_error
+from controller.admin_stock_api import admin_stock_api
+from controller.admin_stock_errorhandler import admin_stock_error
+from controller.account_admin_api import account_admin_api
 from controller.account_admin_errorhandler import account_admin_error
 from controller.release_search_api import release_search_api
 from controller.query_user_api import query_user_api
@@ -21,6 +23,8 @@ db.init_app(app)
 app.register_blueprint(demo_api)
 app.register_blueprint(admin_api)
 app.register_blueprint(admin_error)
+app.register_blueprint(admin_stock_api)
+app.register_blueprint(admin_stock_error)
 app.register_blueprint(account_admin_api)
 app.register_blueprint(account_admin_error)
 app.register_blueprint(release_search_api)

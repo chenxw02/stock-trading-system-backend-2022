@@ -35,13 +35,3 @@ def change_password():
     AdminService.change_password(admin_id, data["password"], data["new_password"])
     return Result.success(None)
 
-@admin_api.route("/admin/permission", methods=["GET"])
-def get_permissions():
-    token = request.headers.get('Authorization')
-    info = decode_token(token)
-    admin_id = info["admin_id"]
-    auth_type = info["type"]
-    if auth_type != "admin":
-        raise InvalidJWT
-    stocks = AdminService.get_permissions(admin_id)
-    return Result.success(stocks)

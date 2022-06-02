@@ -246,9 +246,28 @@ response body:
 }
 ```
 
-### PUT /stock/status
+### PUT /admin/stock_status
 
+修改股票交易状态。
 
+request body:
+
+```json
+{
+    "stock_id": "a111",
+    "stock_status": "F"
+}
+```
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": null,
+    "message": "success"
+}
+```
 
 ### 待续
 
