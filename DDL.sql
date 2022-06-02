@@ -137,6 +137,7 @@ create table transaction
     transaction_number  int         not null,
     transaction_date    int         not null,
     transaction_time    int         not null,
+    transaction_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     primary key (transaction_id),
     foreign key (stock_id) references stock(stock_id),
     foreign key (instruction_id) references instruction(instruction_id),
