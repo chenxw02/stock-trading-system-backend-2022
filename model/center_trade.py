@@ -3,7 +3,7 @@ from exts import db
 
 class Instruction(db.Model):
     __tablename__ = "instruction"
-    instruction_id = db.Column(db.String(20), nullable = False, primary_key = True)
+    instruction_id = db.Column(db.Integer, nullable = False, primary_key = True)
     stock_id = db.Column(db.String(20), db.ForeignKey("stock.stock_id"), nullable=False)
     fund_account_number = db.Column(db.String(20), db.ForeignKey("fund_account.fund_account_number"), nullable=False)
     buy_sell_flag = db.Column(db.CHAR, nullable=False)
