@@ -353,14 +353,14 @@ class AccountAdminService:
 
     @staticmethod
     def re_add_legal_person_securities_account(data):
-        id_num = data["user_id_number"]
+        id_num = data["legal_person_registration_number"]
         result = AccountAdminDao.get_legal_person_by_id(id_num)
         # 没有对应的账号
         if result is None:
             raise NoneAccountError()
         if result.status == "ok":
             raise FrozenAccountError()
-        AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], data["p_account_number"])
+        AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], data["l_account_number"])
 
 
 

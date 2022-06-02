@@ -6,6 +6,7 @@ from util.result import Result
 account_admin_api = Blueprint('account_admin_api', __name__)
 
 
+# 管理员登录
 @account_admin_api.route("/account_admin/login", methods=["POST"])
 def login():
     data = json.loads(request.get_data(as_text=True))
@@ -14,6 +15,7 @@ def login():
     return Result.success(token)
 
 
+# 管理员注册（前端无此接口，测试用）
 @account_admin_api.route("/account_admin/register", methods=["POST"])
 def register():
     data = json.loads(request.get_data(as_text=True))
@@ -22,6 +24,7 @@ def register():
     return Result.success(None)
 
 
+# 展示所有的要审批的指令
 @account_admin_api.route("/account_admin/show_deal", methods=["POST"])
 def show_deal():
     return Result.success(AccountAdminService.show_deal())
@@ -88,7 +91,7 @@ def personnal_security_freeze():
 
 # 个人证券账户解冻
 @account_admin_api.route("/account_admin/personal_security_thaw", methods=["POST"])
-def personnal_security_thaw():
+def personal_security_thaw():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.personal_security_thaw(data)
     return Result.success(None)
