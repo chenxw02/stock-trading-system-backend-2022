@@ -23,3 +23,10 @@ class AdminStockDao:
         stock = Stock.query.get(stock_id)
         stock.stock_status = stock_status
         db.session.commit()
+
+    @staticmethod
+    def set_threshold(stock_id, rise_threshold, fall_threshold):
+        stock = Stock.query.get(stock_id)
+        stock.rise_threshold = rise_threshold
+        stock.fall_threshold = fall_threshold
+        db.session.commit()
