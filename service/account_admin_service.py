@@ -124,18 +124,18 @@ class AccountAdminService:
         account_information = []
         securities_account_number = fund_account_data["securities_account_number"]
         print(securities_account_number)
-        if (AccountAdminDao.check_fund_account(securities_account_number) == 0):
+        if AccountAdminDao.check_fund_account(securities_account_number) == 0 :
             return "failed"
         trade_password = fund_account_data["trade_password"].encode('utf-8')
         encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
         login_password = fund_account_data["login_password"].encode('utf-8')
         encrypted_login_password = bcrypt.hashpw(login_password, bcrypt.gensalt())
         account_information.append(FundAccount(fund_account_number=fund_account_data["fund_account_number"],
-                                               balance=fund_account_data["balance"], frozen=fund_account_data["frozen"],
-                                               taken=fund_account_data["taken"],
+                                               balance=0, frozen=0,
+                                               taken=0,
                                                trade_password=encrypted_trade_password,
                                                login_password=encrypted_login_password,
-                                               account_status=fund_account_data["account_status"],
+                                               account_status="ok",
                                                securities_account_number=fund_account_data[
                                                    "securities_account_number"]))
         AccountAdminDao.insert(account_information)
