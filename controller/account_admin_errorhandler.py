@@ -7,6 +7,7 @@ from error.invalid_account import FrozenAccountError
 from error.invalid_account import ConditionNotMeetError
 from error.invalid_account import NoSecuritiesError
 from error.invalid_account import MulOpenAccountError
+from error.invalid_account import WithFundAccountError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
 from error.wrong_money import RemainMoneyError
@@ -64,3 +65,8 @@ def no_securities_error(error):
 @account_admin_api.errorhandler(MulOpenAccountError)
 def invalid_account_error(error):
     return Result.error(prefix + "1", "您已开过账户，请勿重复开设")
+
+
+@account_admin_api.errorhandler(WithFundAccountError)
+def with_fund_account_error(error):
+    return Result.error(prefix + "1", "证券账户下还有资金账户！")

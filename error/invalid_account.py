@@ -20,3 +20,7 @@ class NoSecuritiesError(Exception):
 
 class MulOpenAccountError(Exception):
     pass
+
+
+class WithFundAccountError(Exception):
+    pass

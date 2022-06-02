@@ -3,7 +3,7 @@ import time
 import bcrypt
 from config import jwt_secret_key
 from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ConditionNotMeetError, \
-    NoSecuritiesError, MulOpenAccountError
+    NoSecuritiesError, MulOpenAccountError, WithFundAccountError
 from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -138,15 +138,15 @@ class AccountAdminService:
     @staticmethod
     def add_fund_account(fund_account_data):
         account_information = []
-        securities_account_number = fund_account_data["securities_account_number"]
-        label = fund_account_data["label"]
-        if label == 0:
-            securities_account_number = "l_" + securities_account_number
-        else:
-            securities_account_number = "p_" + securities_account_number
+        temp_securities_account_number = fund_account_data["securities_account_number"]
+        temp_label = fund_account_data["label"]
 
-        print(securities_account_number)
-        if AccountAdminDao.check_fund_account(securities_account_number) == 0:
+        if temp_label == "0":  # 法人
+            temp_securities_account_number = "l_" + temp_securities_account_number
+        else:   # 个人
+            temp_securities_account_number = "p_" + temp_securities_account_number
+
+        if AccountAdminDao.check_fund_account(temp_securities_account_number) == 0:
             raise NoSecuritiesError()
         trade_password = fund_account_data["trade_password"].encode('utf-8')
         encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
@@ -391,3 +391,34 @@ class AccountAdminService:
             raise ConditionNotMeetError()
         temp_new_number = "l_" + data["l_account_number"]
         AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], temp_new_number)
+
+    # 证券账户销户
+    @staticmethod
+    def securities_account_delete(data):
+        id_num = data["id_num/legal_register_num"]
+        security_num = data["security_num"]
+        label = data["label"]
+        if label == "0":    # 法人
+            security_num = "l_" + security_num
+            temp_fund_account = AccountAdminDao.get_fund_by_securities_account(security_num)
+            # 还有在资金账户与之绑定
+            if temp_fund_account is not None:
+                raise WithFundAccountError()
+            temp_securities_account = AccountAdminDao.get_legal_person_by_id(id_num)
+            AccountAdminDao.legal_personal_delete_one(temp_securities_account)
+        else:   # 个人
+            security_num = "p_" + security_num
+            temp_fund_account = AccountAdminDao.get_fund_by_securities_account(security_num)
+            # 还有在资金账户与之绑定
+            if temp_fund_account is not None:
+                raise WithFundAccountError()
+            temp_securities_account = AccountAdminDao.get_personal_by_id(id_num)
+            AccountAdminDao.personal_delete_one(temp_securities_account)
+
+
+
+
+
+
+
+

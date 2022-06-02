@@ -107,7 +107,7 @@ class AccountAdminDao:
     def fund_froze(fund_account):
         fund_account.account_status = "no"
         db.session.commit()
-    
+
     # 资金账户解冻
     @staticmethod
     def fund_thaw(fund_account):
@@ -123,7 +123,8 @@ class AccountAdminDao:
     # 根据法人注册登记号查找证券账户
     @staticmethod
     def get_legal_person_by_id(legal_register_num):
-        security_account = LegalPersonSecuritiesAccount.query.filter_by(legal_person_registration_number=legal_register_num).first()
+        security_account = LegalPersonSecuritiesAccount.query.filter_by(
+            legal_person_registration_number=legal_register_num).first()
         return security_account
 
     @staticmethod
@@ -138,4 +139,26 @@ class AccountAdminDao:
         old_class.password = new_password
         old_class.l_account_number = new_l_number
         old_class.status = "ok"
+        db.session.commit()
+
+    # 根据证券帐号查找资金账户
+    @staticmethod
+    def get_fund_by_securities_account(securities_account_number):
+        fund_account = FundAccount.query.filter_by(securities_account_number=securities_account_number).first()
+        return fund_account
+
+    # 个人证券账户删除一条记录（销户）
+    @staticmethod
+    def personal_delete_one(fund_account):
+        print("start delete")
+        db.session.delete(fund_account)
+        print("delete ok")
+        db.session.commit()
+
+    # 法人证券账户删除一条记录（销户）
+    @staticmethod
+    def legal_personal_delete_one(fund_account):
+        print("start delete")
+        db.session.delete(fund_account)
+        print("delete ok")
         db.session.commit()

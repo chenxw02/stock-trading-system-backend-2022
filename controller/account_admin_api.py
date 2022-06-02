@@ -143,3 +143,11 @@ def re_add_legal_person_securities_account():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.re_add_legal_person_securities_account(data)
     return Result.success(None)
+
+
+# 证券账户销户
+@account_admin_api.route("/account_admin/securities_account_delete", methods=["POST"])
+def securities_account_delete():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.securities_account_delete(data)
+    return Result.success(None)
