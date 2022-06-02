@@ -61,3 +61,7 @@ class AdminService:
     def get_permissions(admin_id):
         permissions = AdminDao.get_permissions(admin_id)
         return permissions
+
+    @staticmethod
+    def set_status(stock_id, stock_status):
+        AdminDao.set_status(stock_id, stock_status)
