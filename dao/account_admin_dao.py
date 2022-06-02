@@ -130,10 +130,12 @@ class AccountAdminDao:
     def re_add_personal_securities_account(old_class, new_password, new_p_number):
         old_class.password = new_password
         old_class.p_account_number = new_p_number
+        old_class.status = "ok"
         db.session.commit()
 
     @staticmethod
     def re_add_legal_person_securities_account(old_class, new_password, new_l_number):
         old_class.password = new_password
         old_class.l_account_number = new_l_number
+        old_class.status = "ok"
         db.session.commit()
