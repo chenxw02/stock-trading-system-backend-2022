@@ -1,6 +1,9 @@
 from dao.agg_auc_dao import AggAucDao
-import datetime
 from model.center_trade import Instruction
+from model.center_trade import K
+from model.center_trade import Stock
+import time
+import datetime
 
 
 class AggAuc:
@@ -37,7 +40,6 @@ class AggAuc:
             for i in range(r_last_cnt, len(t_record)):
                 t_record[i].append(price)  # 插入最终的成交价
             r_last_cnt = len(t_record)
-            # 更新数据表 待补充
         return t_record
 
     @staticmethod
@@ -104,8 +106,8 @@ class AggAuc:
     def createtransres(con_res):
         b_id = con_res[0]
         s_id = con_res[1]
-        t_price = con_res[2]
-        t_number = con_res[3]
+        t_price = con_res[3]
+        t_number = con_res[2]
         stock_id = AggAucDao.gettransstock(b_id)
         b_s_flag1 = AggAucDao.gettransflag(b_id)
         b_s_flag2 = AggAucDao.gettransflag(s_id)
@@ -122,3 +124,58 @@ class AggAuc:
                                           t_amount, t_number, t_date, t_time, i_id2)
         t_id = [t1_id, t2_id]
         return t_id
+
+    @staticmethod
+    def deal_expired_instruction():         # 处理过期指令
+        AggAucDao.dealexpins()
+
+    @staticmethod
+    def create_k_table():       # 创建k值表
+        AggAucDao.createktable()
+
+    # 判断股票状态
+    @staticmethod
+    def judge_stock_status():
+        localtime = time.asctime(time.localtime(time.time()))
+        localtime = time.strftime("%Y%m%d", time.localtime())
+        inttime = int(localtime)
+        instr = AggAucDao.gettodayins()
+        for i in instr:
+            s = AggAucDao.getstock(i)                      # 获取股票信息
+            if s.stock_status=='F':                        # 股票状态为'F',无法交易
+                AggAucDao.setexp(i.instruction_id)         # 设置指令为过期指令
+
+
+    #判断涨跌幅
+    @staticmethod
+    def judge_rise_fall():
+        instr = AggAucDao.gettodayins()
+        for i in instr:
+            s = AggAucDao.getstock(i.instruction_id)              # 获取股票信息
+            k = AggAucDao.getyesterdayk(s.stock_id)               # 获取昨日K值表
+            if i.target_price>(k.end_price)*(1+s.rise_threshold) or i.target_price<(k.end_price)*(1-s.fall_threshold):
+                AggAucDao.setexp(i.instruction_id) # 出价不在涨跌幅范围内
+
+    @staticmethod
+    def aggregate_instruction_pretreatment():
+        AggAucDao.dealexpins()  # 处理过期指令
+        AggAucDao.createktable()  # 创建K值表
+
+        # 判断股票状态
+        localtime = time.strftime("%Y%m%d", time.localtime())
+        inttime = int(localtime)
+        instr = AggAucDao.gettodayins()
+        for i in instr:
+            s = AggAucDao.getstock(i)  # 获取股票信息
+            if s.stock_status == 'F':  # 股票状态为'F',无法交易
+                AggAucDao.setexp(i.instruction_id)  # 设置指令为过期指令
+
+        # 判断涨跌幅
+        instr = AggAucDao.gettodayins()
+        for i in instr:
+            s = AggAucDao.getstock(i.instruction_id)  # 获取股票信息
+            k = AggAucDao.getyesterdayk(s.stock_id)  # 获取昨日K值表
+            if i.target_price > (k.end_price) * (1 + s.rise_threshold) or i.target_price < (k.end_price) * (
+                    1 - s.fall_threshold):
+                AggAucDao.setexp(i.instruction_id)  # 出价不在涨跌幅范围内，标记指令过期
+                
