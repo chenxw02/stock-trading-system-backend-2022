@@ -307,6 +307,13 @@ class AccountAdminService:
     def fund_freeze(data):
         id_num_legal_register_num = data["id_num/legal_register_num"]
         security_num = data["security_num"]
+
+        label = data["label"]
+        if label == 0:
+            security_num = "l_" + security_num
+        else:
+            security_num = "p_" + security_num
+
         if security_num[0] == 'p':
             security_account = AccountAdminDao.get_personal(security_num)
             if security_account is None:
@@ -339,6 +346,13 @@ class AccountAdminService:
     def fund_thaw(data):
         id_num_legal_register_num = data["id_num/legal_register_num"]
         security_num = data["security_num"]
+
+        label = data["label"]
+        if label == 0:
+            security_num = "l_" + security_num
+        else:
+            security_num = "p_" + security_num
+
         if security_num[0] == 'p':
             security_account = AccountAdminDao.get_personal(security_num)
             if security_account is None:
