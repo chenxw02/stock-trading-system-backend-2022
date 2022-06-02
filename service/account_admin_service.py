@@ -169,7 +169,7 @@ class AccountAdminService:
         fund_account_number = data["fund_account_number"]
         input_trade_password = data["trade_password"].encode('utf-8')
         add_withdraw = data["add_withdraw"]
-        operating_num = data["operating_num"]
+        operating_num = int(data["operating_num"])
         if operating_num <= 0:
             # 存取款金额小于等于0
             raise MinusMoneyError()
