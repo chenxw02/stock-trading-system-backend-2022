@@ -4,8 +4,9 @@ from controller.account_admin_api import account_admin_api
 from error.invalid_account import InvalidAccountError
 from error.invalid_account import NoneAccountError
 from error.invalid_account import FrozenAccountError
-from error.invalid_account import ContationNotMeetError
+from error.invalid_account import ConditionNotMeetError
 from error.invalid_account import NoSecuritiesError
+from error.invalid_account import MulOpenAccountError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
 from error.wrong_money import RemainMoneyError
@@ -50,11 +51,16 @@ def wrong_money_error(error):
     return Result.error(prefix + "1", "该资金账户尚有存款")
 
 
-@account_admin_api.errorhandler(ContationNotMeetError)
-def invalid_account_error(error):
+@account_admin_api.errorhandler(ConditionNotMeetError)
+def condition_not_meet_error(error):
     return Result.error(prefix + "1", "该账户不满足重新开户条件")
 
 
 @account_admin_api.errorhandler(NoSecuritiesError)
-def invalid_account_error(error):
+def no_securities_error(error):
     return Result.error(prefix + "1", "对应证券账户不存在")
+
+
+@account_admin_api.errorhandler(MulOpenAccountError)
+def invalid_account_error(error):
+    return Result.error(prefix + "1", "您已开过账户，请勿重复开设")

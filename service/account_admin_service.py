@@ -2,8 +2,8 @@ import jwt
 import time
 import bcrypt
 from config import jwt_secret_key
-from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ContationNotMeetError, \
-    NoSecuritiesError
+from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ConditionNotMeetError, \
+    NoSecuritiesError, MulOpenAccountError
 from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -62,6 +62,13 @@ class AccountAdminService:
         no_p_account_number = "p_" + account_data["p_account_number"]
         temp_registration_date = int("".join(account_data["registration_date"].split('-')))
         print(temp_registration_date)
+        # 验证是否重复开设
+        temp_user_id_number = account_data["user_id_number"].encode('utf-8')
+        judge = AccountAdminDao.get_personal_by_id(temp_user_id_number)
+        if judge is not None:
+            # 该身份证号已经有账户
+            raise MulOpenAccountError()
+
         account_information.append(PersonalSecuritiesAccount( \
             p_account_number=no_p_account_number, \
             password=encrypted_password, \
@@ -90,6 +97,13 @@ class AccountAdminService:
         password = account_data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
         no_l_account_number = "l_" + account_data["l_account_number"]
+        # 验证是否重复开设
+        temp_legal_person_registration_number = account_data["legal_person_registration_number"].encode('utf-8')
+        judge = AccountAdminDao.get_legal_person_by_id(temp_legal_person_registration_number)
+        if judge is not None:
+            # 该法人注册登记号已经有账户
+            raise MulOpenAccountError()
+
         account_information.append(LegalPersonSecuritiesAccount( \
             l_account_number=no_l_account_number, \
             password=encrypted_password, \
@@ -352,6 +366,7 @@ class AccountAdminService:
             raise NoneAccountError()
         AccountAdminDao.fund_thaw(fund_account)
 
+    # 重新开户（个人证券账户）
     @staticmethod
     def re_add_personal_securities_account(data):
         id_num = data["user_id_number"]
@@ -360,9 +375,11 @@ class AccountAdminService:
         if result is None:
             raise NoneAccountError()
         if result.status == "ok":
-            raise ContationNotMeetError()
-        AccountAdminDao.re_add_personal_securities_account(result, data["password"], data["p_account_number"])
+            raise ConditionNotMeetError()
+        temp_new_number = "p_" + data["p_account_number"]
+        AccountAdminDao.re_add_personal_securities_account(result, data["password"], temp_new_number)
 
+    # 重新开户（法人证券账户）
     @staticmethod
     def re_add_legal_person_securities_account(data):
         id_num = data["legal_person_registration_number"]
@@ -371,5 +388,6 @@ class AccountAdminService:
         if result is None:
             raise NoneAccountError()
         if result.status == "ok":
-            raise ContationNotMeetError()
-        AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], data["l_account_number"])
+            raise ConditionNotMeetError()
+        temp_new_number = "l_" + data["l_account_number"]
+        AccountAdminDao.re_add_legal_person_securities_account(result, data["password"], temp_new_number)

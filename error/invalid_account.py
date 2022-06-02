@@ -10,9 +10,13 @@ class FrozenAccountError(Exception):
     pass
 
 
-class ContationNotMeetError(Exception):
+class ConditionNotMeetError(Exception):
     pass
 
 
 class NoSecuritiesError(Exception):
+    pass
+
+
+class MulOpenAccountError(Exception):
     pass
