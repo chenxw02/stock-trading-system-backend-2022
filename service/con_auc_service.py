@@ -83,10 +83,9 @@ class ConAuc:
         # update K table
         date = ConAucDao.getstockid(t_id)
         k_info = ConAucDao.getkinfo(s_id, date)
-        for i in k_info:
-            h_pri = i.highest_price
-            l_pri = i.lowest_price
-            k_id = i.stock_id
+        h_pri = k_info.highest_price
+        l_pri = k_info.lowest_price
+        k_id = k_info.k_id
 
         if (h_pri == None):
             ConAucDao.updatestartprice(k_id, t_price)
@@ -99,18 +98,18 @@ class ConAuc:
         if (t_price < l_pri or l_pri == None):
             ConAucDao.updatelowestprice(k_id, t_price)
 
+        # update instruction
         i_id = ConAucDao.getinstid(t_id)
         t_number = ConAucDao.getinstnumber(t_id)
         t_amount = ConAucDao.getinstamount(t_id)
         ConAucDao.updateinstinfo(i_id, t_number, t_amount)
 
         i_info = ConAucDao.getinstinfo(i_id)
-        for i in i_info:
-            t_num = i.target_number
-            a_num = i.actual_number
+        t_num = i_info.target_number
+        a_num = i_info.actual_number
 
         if (t_num == a_num):
-            flag = 'N'
+            flag = 'T'
         else:
             flag = 'P'
 
