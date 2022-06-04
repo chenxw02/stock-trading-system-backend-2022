@@ -158,8 +158,7 @@ class AccountAdminService:
                                                trade_password=encrypted_trade_password,
                                                login_password=encrypted_login_password,
                                                account_status="ok",
-                                               securities_account_number=fund_account_data[
-                                                   "securities_account_number"]))
+                                               securities_account_number=temp_securities_account_number))
         AccountAdminDao.insert(account_information)
         print(account_information)
 
