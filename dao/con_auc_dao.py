@@ -17,25 +17,25 @@ class ConAucDao:
         inttime = int(localtime)
         tmp_k = K.query.filter(K.stock_id == stock_id, K.date < inttime)
         k = tmp_k.query.order_by(db.desc(tmp_k.date)).first()
-        return k
+        return k[0]
 
     # 获取股票信息
     @staticmethod
     def getstock(ins):
         s = Stock.query.filter(Stock.stock_id == ins.stock_id)
-        return s
+        return s[0]
 
     # 获取指令信息
     @staticmethod
     def getins(ins_id):
         ins = Instruction.query.filter(Instruction.instruction.id == ins_id)
-        return ins
+        return ins[0]
 
     # 设置不在涨跌幅阈值内的指令为过期指令
     @staticmethod
     def setexp(ins_id):
         ins = Instruction.query.filter(Instruction.instruction_id == ins_id)
-        ins.instruction_state = "E"
+        ins[0].instruction_state = "E"
         db.session.commit()
 
     #获取买指令
