@@ -512,11 +512,10 @@ class AccountAdminService:
         if result is None:
             raise NoneAccountError()
         if label == 0:
-            temp_new_number = "l_" + data["account_number"]
             security_num = result.l_account_number
         else:
-            temp_new_number = "p_" + data["account_number"]
             security_num = result.p_account_number
+        temp_new_number = data["account_number"]
         login_password = data["login_password"].encode('utf-8')
         encrypted_login_password = bcrypt.hashpw(login_password, bcrypt.gensalt())
         trade_password = data["trade_password"].encode('utf-8')
