@@ -6,7 +6,7 @@ from service.agg_auc_service import AggAuc
 class AggAucService:
 
     @staticmethod
-    def agg_auc(inst_id):
+    def agg_auc():
         # 预处理
         AggAuc.aggregate_instruction_pretreatment()
         # 集合竞价

@@ -18,4 +18,8 @@ class ConAucService:
         # 更新数据
         ConAuc.update(t_id[0])
         ConAuc.update(t_id[1])
+        tran_list0 = (t_id[0])[:3] + (t_id[0])[4:6]
+        tran_list1 = (t_id[1])[:3] + (t_id[1])[4:6]
+        # update(tran_list0)
+        # update(tran_list1)
         return t_id
