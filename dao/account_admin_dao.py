@@ -35,8 +35,18 @@ class AccountAdminDao:
         if temp != None:
             print("return 1-2")
             return 1
+
         print("check_fund_account return 0")
         return 0
+    # 检查该证券账户是否已经有对应的资金账户
+    @staticmethod
+    def check_securities_account(securities_account_number):
+        temp = FundAccount.query.filter_by(securities_account_number=securities_account_number)
+        if temp is not None:
+            return 0
+        return 1
+
+
 
     # 查找资金账户
     @staticmethod

@@ -8,6 +8,7 @@ from error.invalid_account import ConditionNotMeetError
 from error.invalid_account import NoSecuritiesError
 from error.invalid_account import MulOpenAccountError
 from error.invalid_account import WithFundAccountError
+from error.invalid_account import MulSecuritiesAccountError
 from error.wrong_money import MinusMoneyError
 from error.wrong_money import NoMoneyError
 from error.wrong_money import RemainMoneyError
@@ -70,3 +71,8 @@ def invalid_account_error(error):
 @account_admin_api.errorhandler(WithFundAccountError)
 def with_fund_account_error(error):
     return Result.error(prefix + "1", "证券账户下还有资金账户！")
+
+
+@account_admin_api.errorhandler(MulSecuritiesAccountError)
+def mul_securities_account_error(error):
+    return Result.error(prefix + "1", "该证券账户已开过资金账户！")

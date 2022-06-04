@@ -3,7 +3,7 @@ import time
 import bcrypt
 from config import jwt_secret_key
 from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ConditionNotMeetError, \
-    NoSecuritiesError, MulOpenAccountError, WithFundAccountError
+    NoSecuritiesError, MulOpenAccountError, WithFundAccountError, MulSecuritiesAccountError
 from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -229,11 +229,15 @@ class AccountAdminService:
 
         if temp_label == "0":  # 法人
             temp_securities_account_number = "l_" + temp_securities_account_number
+
         else:  # 个人
             temp_securities_account_number = "p_" + temp_securities_account_number
 
         if AccountAdminDao.check_fund_account(temp_securities_account_number) == 0:
             raise NoSecuritiesError()
+        if AccountAdminDao.check_securities_account(temp_securities_account_number) ==0:
+            raise MulSecuritiesAccountError()
+
         trade_password = fund_account_data["trade_password"].encode('utf-8')
         encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
         login_password = fund_account_data["login_password"].encode('utf-8')

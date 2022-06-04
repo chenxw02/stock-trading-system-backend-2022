@@ -24,3 +24,7 @@ class MulOpenAccountError(Exception):
 
 class WithFundAccountError(Exception):
     pass
+
+
+class MulSecuritiesAccountError(Exception):
+    pass
