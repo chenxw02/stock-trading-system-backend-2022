@@ -186,3 +186,20 @@ class AccountAdminDao:
             p_account_number=p_account_number, user_id_number=user_id_number, user_name=user_name, status=status,
             agent=agent, user_address=user_address).all()
         return security_account
+
+    @staticmethod
+    def get_fund_account_information_by_query(sql_query, account_data):
+        print(sql_query)
+        fund_account_number = account_data["fund_account_number"]
+        securities_account_number = account_data["securities_account_number"]
+        status = account_data["status"]
+        balance = account_data["balance"]
+        lable = account_data["lable"]
+        if lable=="0":
+            securities_account_number = "l_"+securities_account_number
+        else:
+            securities_account_number = "p_"+securities_account_number
+        fund_account = FundAccount.query.filter(text(sql_query)).params(
+            fund_account_number=fund_account_number, securities_account_number=securities_account_number, status=status,
+            balance=balance).all()
+        return fund_account

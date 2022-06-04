@@ -63,22 +63,22 @@ class AccountAdminService:
         agent = account_data["agent"]
         user_address = account_data["user_address"]
         sql_query = "1"
-        print(no_p_account_number)
+        # print(no_p_account_number)
         if no_p_account_number != '':
             sql_query += " and p_account_number=:p_account_number"
-        print(user_id_number)
+        # print(user_id_number)
         if user_id_number != '':
             sql_query += " and user_id_number=:user_id_number"
-        print(user_name)
+        # print(user_name)
         if user_name != '':
             sql_query += " and user_name=:user_name"
-        print(status)
+        # print(status)
         if status != '':
             sql_query += " and status=:status"
-        print(agent)
+        # print(agent)
         if agent != '':
             sql_query += " and agent=:agent"
-        print(user_address)
+        # print(user_address)
         if user_address != '':
             # sql_query += " and user_address like '%:user_address%'"
             sql_query += " and user_address =:user_address"
@@ -102,6 +102,41 @@ class AccountAdminService:
             result.append(temp_result)
         print(result)
         return result
+
+    @staticmethod
+    def get_fund_account_information_by_query(account_data):
+        print(account_data)
+        fund_account_number = account_data["fund_account_number"]
+        securities_account_number = account_data["securities_account_number"]
+        status = account_data["status"]
+        balance = account_data["balance"]
+        sql_query = "1"
+        print(fund_account_number)
+        if fund_account_number != '':
+            sql_query += " and fund_account_number=:fund_account_number"
+        print(securities_account_number)
+        if securities_account_number != '':
+            sql_query += " and securities_account_number=:securities_account_number"
+        print(status)
+        if status != '':
+            sql_query += " and status=:status"
+        print(balance)
+        if balance != '':
+            sql_query += " and balance=:balance"
+        temp_information = AccountAdminDao.get_fund_account_information_by_query(sql_query, account_data)
+        result = []
+        for temp in temp_information:
+            temp_result = {}
+            temp_result["fund_account_number"] = temp.fund_account_number
+            temp_result["balance"] = temp.balance
+            temp_result["frozen"] = temp.frozen
+            temp_result["taken"] = temp.taken
+            temp_result["account_status"] = temp.account_status
+            temp_result["securities_account_number"] = temp.securities_account_number
+            result.append(temp_result)
+        print(result)
+        return result
+
 
     # 添加个人证券账户
     @staticmethod

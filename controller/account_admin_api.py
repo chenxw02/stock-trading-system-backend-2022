@@ -160,6 +160,13 @@ def get_securities_account_information_by_query():
     return Result.success(AccountAdminService.get_securities_account_information_by_query(data))
 
 
+# 按查询条件返回所有资金账户信息
+@account_admin_api.route("/account_admin/get_fund_account_information_by_query", methods=["POST"])
+def get_fund_account_information_by_query():
+    data = json.loads(request.get_data(as_text=True))
+    return Result.success(AccountAdminService.get_fund_account_information_by_query(data))
+
+
 # 重新开户（资金账户）
 @account_admin_api.route("/account_admin/re_add_fund_account", methods=["POST"])
 def re_add_fund_account():
