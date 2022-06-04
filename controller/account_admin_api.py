@@ -151,3 +151,10 @@ def securities_account_delete():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.securities_account_delete(data)
     return Result.success(None)
+
+
+# 按查询条件返回所有证券账户信息
+@account_admin_api.route("/account_admin/get_securities_account_information_by_query", methods=["POST"])
+def get_securities_account_information_by_query():
+    data = json.loads(request.get_data(as_text=True))
+    return Result.success(AccountAdminService.get_securities_account_information_by_query(data))

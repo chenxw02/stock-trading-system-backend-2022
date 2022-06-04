@@ -52,6 +52,57 @@ class AccountAdminService:
         print(result)
         return result
 
+    # 按查询条件返回所有证券账户信息
+    @staticmethod
+    def get_securities_account_information_by_query(account_data):
+        print(account_data)
+        no_p_account_number = account_data["p_account_number"]
+        user_id_number = account_data["user_id_number"]
+        user_name = account_data["user_name"]
+        status = account_data["status"]
+        agent = account_data["agent"]
+        user_address = account_data["user_address"]
+        sql_query = "1"
+        print(no_p_account_number)
+        if no_p_account_number != '':
+            sql_query += " and p_account_number=:p_account_number"
+        print(user_id_number)
+        if user_id_number != '':
+            sql_query += " and user_id_number=:user_id_number"
+        print(user_name)
+        if user_name != '':
+            sql_query += " and user_name=:user_name"
+        print(status)
+        if status != '':
+            sql_query += " and status=:status"
+        print(agent)
+        if agent != '':
+            sql_query += " and agent=:agent"
+        print(user_address)
+        if user_address != '':
+            # sql_query += " and user_address like '%:user_address%'"
+            sql_query += " and user_address =:user_address"
+        temp_information = AccountAdminDao.get_securities_account_information_by_query(sql_query, account_data)
+        result = []
+        for temp in temp_information:
+            temp_result = {}
+            temp_result["p_account_number"] = temp.p_account_number
+            temp_result["user_name"] = temp.user_name
+            temp_result["registration_date"] = temp.registration_date
+            temp_result["user_id_number"] = temp.user_id_number
+            temp_result["user_address"] = temp.user_address
+            temp_result["user_job"] = temp.user_job
+            temp_result["user_education"] = temp.user_education
+            temp_result["user_work_unit"] = temp.user_work_unit
+            temp_result["telephone"] = temp.telephone
+            temp_result["agent"] = temp.agent
+            temp_result["agent_id"] = temp.agent_id
+            temp_result["authority"] = temp.authority
+            temp_result["status"] = temp.status
+            result.append(temp_result)
+        print(result)
+        return result
+
     # 添加个人证券账户
     @staticmethod
     def add_personal_securities_account(account_data):
@@ -143,7 +194,7 @@ class AccountAdminService:
 
         if temp_label == "0":  # 法人
             temp_securities_account_number = "l_" + temp_securities_account_number
-        else:   # 个人
+        else:  # 个人
             temp_securities_account_number = "p_" + temp_securities_account_number
 
         if AccountAdminDao.check_fund_account(temp_securities_account_number) == 0:
@@ -230,7 +281,7 @@ class AccountAdminService:
         if security_num[0] == 'p':
             security_account = AccountAdminDao.get_personal(security_num)
             if security_account is None:
-                # 没有该资金账户
+                # 没有该证券账户
                 raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.user_id_number:
@@ -239,11 +290,11 @@ class AccountAdminService:
         elif security_num[0] == 'l':
             security_account = AccountAdminDao.get_legal(security_num)
             if security_account is None:
-                # 没有该资金账户
+                # 没有该证券账户
                 raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.legal_person_id_number:
-                    # 法人证券账户与用户身份证不匹配
+                    # 法人证券账户与法人注册号不匹配
                     raise InvalidAccountError()
         else:
             # account命名问题
@@ -416,7 +467,7 @@ class AccountAdminService:
         id_num = data["id_num/legal_register_num"]
         security_num = data["security_num"]
         label = data["label"]
-        if label == "0":    # 法人
+        if label == "0":  # 法人
             security_num = "l_" + security_num
             temp_fund_account = AccountAdminDao.get_fund_by_securities_account(security_num)
             # 还有在资金账户与之绑定
@@ -424,7 +475,7 @@ class AccountAdminService:
                 raise WithFundAccountError()
             temp_securities_account = AccountAdminDao.get_legal_person_by_id(id_num)
             AccountAdminDao.legal_personal_delete_one(temp_securities_account)
-        else:   # 个人
+        else:  # 个人
             security_num = "p_" + security_num
             temp_fund_account = AccountAdminDao.get_fund_by_securities_account(security_num)
             # 还有在资金账户与之绑定
@@ -432,11 +483,3 @@ class AccountAdminService:
                 raise WithFundAccountError()
             temp_securities_account = AccountAdminDao.get_personal_by_id(id_num)
             AccountAdminDao.personal_delete_one(temp_securities_account)
-
-
-
-
-
-
-
-

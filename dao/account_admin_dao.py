@@ -4,6 +4,7 @@ from model.account_admin import Deal
 from model.account_admin import PersonalSecuritiesAccount
 from model.account_admin import LegalPersonSecuritiesAccount
 from model.account_admin import FundAccount
+from sqlalchemy import text
 
 
 # 将一个表的所有简单操作集中成一个dao数据库类
@@ -162,3 +163,18 @@ class AccountAdminDao:
         db.session.delete(fund_account)
         print("delete ok")
         db.session.commit()
+
+    @staticmethod
+    def get_securities_account_information_by_query(sql_query, account_data):
+        print(sql_query)
+        p_account_number = "p_" + account_data["p_account_number"]
+        user_id_number = account_data["user_id_number"]
+        user_name = account_data["user_name"]
+        status = account_data["status"]
+        agent = account_data["agent"]
+        user_address = account_data["user_address"]
+        print(user_address)
+        security_account = PersonalSecuritiesAccount.query.filter(text(sql_query)).params(
+            p_account_number=p_account_number, user_id_number=user_id_number, user_name=user_name, status=status,
+            agent=agent, user_address=user_address).all()
+        return security_account
