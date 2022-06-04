@@ -194,8 +194,8 @@ class AccountAdminDao:
         securities_account_number = account_data["securities_account_number"]
         status = account_data["status"]
         balance = account_data["balance"]
-        lable = account_data["lable"]
-        if lable=="0":
+        label = account_data["label"]
+        if label == "0":
             securities_account_number = "l_"+securities_account_number
         else:
             securities_account_number = "p_"+securities_account_number
