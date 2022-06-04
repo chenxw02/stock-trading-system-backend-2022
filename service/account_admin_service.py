@@ -235,7 +235,7 @@ class AccountAdminService:
 
         if AccountAdminDao.check_fund_account(temp_securities_account_number) == 0:
             raise NoSecuritiesError()
-        if AccountAdminDao.check_securities_account(temp_securities_account_number) ==0:
+        if AccountAdminDao.check_securities_account(temp_securities_account_number) == 0:
             raise MulSecuritiesAccountError()
 
         trade_password = fund_account_data["trade_password"].encode('utf-8')
