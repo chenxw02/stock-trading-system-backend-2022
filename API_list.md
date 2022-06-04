@@ -142,6 +142,103 @@ request body:
     "message": "success"
 }
 ```
+### POST /query_user/login
+
+用户登录，传入用户名密码，返回用户ID和用户权限
+
+request body:
+
+```json
+{
+	"ID":"csc",
+	"password":"1"
+}
+```
+
+response body:
+
+```json
+{
+    "code": 0,
+    "data": 
+        {
+            "user_id":"csc",
+            "type": "p"  
+        },
+    "message": "success"
+}
+```
+
+### POST /query_user/register
+
+用户注册,已注册的用户名将不能被重复使用
+
+request body:
+
+```json
+{
+	"ID":"CSC",
+	"password":"1"
+}
+```
+
+response body:
+
+```json
+{
+	"code": 0,
+    "data": null,
+    "message": "success"
+}
+```
+
+### POST /query_user/modify
+
+用户密码修改，传入用户名，新密码，确认新密码，返回成功或失败的信息
+
+request body:
+
+```json
+{
+	"ID":"CSC",
+	"password":"2",
+	"re_password":"2"
+}
+```
+
+response body:
+
+```json
+{
+	"code": 0,
+    "data": null,
+    "message": "success"
+}
+```
+
+### POST /query_user/upgrade
+
+用户升级，传入用户ID，支付账号，支付密码，返回成功或失败信息
+
+request body:
+
+```json
+{
+	"ID":"CSC",
+	"pay_account_id":"admin",
+	"pay_account_psw":"admin"
+}
+```
+
+response body:
+
+```json
+{
+	"code": 0,
+    "data": null,
+    "message": "success"
+}
+```
 
 
 ## A5组负责
