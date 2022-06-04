@@ -151,3 +151,10 @@ def securities_account_delete():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.securities_account_delete(data)
     return Result.success(None)
+
+# 重新开户（资金账户）
+@account_admin_api.route("/account_admin/re_add_fund_account", methods=["POST"])
+def re_add_fund_account():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.re_add_fund_account(data)
+    return Result.success(None)
