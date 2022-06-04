@@ -209,8 +209,7 @@ class AccountAdminService:
                                                trade_password=encrypted_trade_password,
                                                login_password=encrypted_login_password,
                                                account_status="ok",
-                                               securities_account_number=fund_account_data[
-                                                   "securities_account_number"]))
+                                               securities_account_number=temp_securities_account_number))
         AccountAdminDao.insert(account_information)
         print(account_information)
 
@@ -368,7 +367,7 @@ class AccountAdminService:
         if security_num[0] == 'p':
             security_account = AccountAdminDao.get_personal(security_num)
             if security_account is None:
-                # 没有该资金账户
+                # 没有该证券账户
                 raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.user_id_number:
@@ -381,7 +380,7 @@ class AccountAdminService:
                 raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.legal_person_id_number:
-                    # 法人证券账户与用户身份证不匹配
+                    # 法人证券账户与法人注册号不匹配
                     raise InvalidAccountError()
         else:
             # account命名问题
@@ -407,7 +406,7 @@ class AccountAdminService:
         if security_num[0] == 'p':
             security_account = AccountAdminDao.get_personal(security_num)
             if security_account is None:
-                # 没有该资金账户
+                # 没有该证券账户
                 raise NoneAccountError()
             else:
                 if id_num_legal_register_num != security_account.user_id_number:
@@ -460,6 +459,36 @@ class AccountAdminService:
         password = data["password"].encode('utf-8')
         encrypted_password = bcrypt.hashpw(password, bcrypt.gensalt())
         AccountAdminDao.re_add_legal_person_securities_account(result, encrypted_password, temp_new_number)
+
+    # 重新开户（资金账户）
+    @staticmethod
+    def re_add_fund_account(data):
+        id_num = data["id_num/legal_register_num"]
+        label = data["label"]
+        if label == 0:
+            result = AccountAdminDao.get_legal_person_by_id(id_num)
+        else:
+            result = AccountAdminDao.get_personal_by_id(id_num)
+        # 没有对应的账号
+        if result is None:
+            raise NoneAccountError()
+        if label == 0:
+            temp_new_number = "l_" + data["account_number"]
+            security_num = result.l_account_number
+        else:
+            temp_new_number = "p_" + data["account_number"]
+            security_num = result.p_account_number
+        login_password = data["login_password"].encode('utf-8')
+        encrypted_login_password = bcrypt.hashpw(login_password, bcrypt.gensalt())
+        trade_password = data["trade_password"].encode('utf-8')
+        encrypted_trade_password = bcrypt.hashpw(trade_password, bcrypt.gensalt())
+        fund_account = AccountAdminDao.get_fund_by_security(security_num)
+        if fund_account is None:
+            # 该证券账户没有绑定资金账户
+            raise NoneAccountError()
+        if fund_account.account_status == "ok":
+            raise ConditionNotMeetError()
+        AccountAdminDao.re_add_fund_account(fund_account, encrypted_login_password, encrypted_trade_password, temp_new_number)
 
     # 证券账户销户
     @staticmethod

@@ -142,6 +142,14 @@ class AccountAdminDao:
         old_class.status = "ok"
         db.session.commit()
 
+    @staticmethod
+    def re_add_fund_account(old_class, new_login_password, new_trade_password, new_number):
+        old_class.login_password = new_login_password
+        old_class.trade_password = new_trade_password
+        old_class.fund_account_number = new_number
+        old_class.account_status = "ok"
+        db.session.commit()
+
     # 根据证券帐号查找资金账户
     @staticmethod
     def get_fund_by_securities_account(securities_account_number):

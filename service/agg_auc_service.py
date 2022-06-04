@@ -52,10 +52,9 @@ class AggAuc:
         # update K table
         date = AggAucDao.getstockid(t_id)
         k_info = AggAucDao.getkinfo(s_id, date)
-        for i in k_info:
-            h_pri = i.highest_price
-            l_pri = i.lowest_price
-            k_id = i.stock_id
+        h_pri = k_info.highest_price
+        l_pri = k_info.lowest_price
+        k_id = k_info.k_id
 
         if(h_pri == None):
             AggAucDao.updatestartprice(k_id, t_price)
@@ -68,15 +67,15 @@ class AggAuc:
         if(t_price < l_pri or l_pri == None):
             AggAucDao.updatelowestprice(k_id, t_price)
 
+        # update instruction
         i_id = AggAucDao.getinstid(t_id)
         t_number = AggAucDao.getinstnumber(t_id)
         t_amount = AggAucDao.getinstamount(t_id)
         AggAucDao.updateinstinfo(i_id, t_number, t_amount)
 
         i_info = AggAucDao.getinstinfo(i_id)
-        for i in i_info:
-            t_num = i.target_number
-            a_num = i.actual_number
+        t_num = i_info.target_number
+        a_num = i_info.actual_number
 
         if(t_num == a_num):
             flag = 'T'
@@ -85,8 +84,7 @@ class AggAuc:
 
         AggAucDao.updateinsttype(i_id, flag)
 
-        # 获取日期时间
-
+    # 获取日期时间
     @staticmethod
     def getnowdata():
         now = datetime.datetime.now()
