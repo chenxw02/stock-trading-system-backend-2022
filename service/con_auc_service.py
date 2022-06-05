@@ -24,14 +24,14 @@ class ConAuc:
     def continue_auction(inst_id):
         buy = ConAucDao.getbuyinstr(inst_id)
         sell = ConAucDao.getsellinstr(inst_id)
-        if buy.target_price < sell.target_price:
+        if buy[0].target_price < sell[0].target_price:
             return -1    ##无法交易标志
         else:
-            transaction_price = 0.5 * (buy.target_price + sell.target_price)
-            buyrest = buy.target_number - buy.actual_number
-            sellrest = sell.target_number - sell.actual_number
+            transaction_price = 0.5 * (buy[0].target_price + sell[0].target_price)
+            buyrest = buy[0].target_number - buy[0].actual_number
+            sellrest = sell[0].target_number - sell[0].actual_number
             transaction_number = min(buyrest, sellrest)
-            con_res = [buy.instruction_id, sell.instruction_id, transaction_price, transaction_number]
+            con_res = [buy[0].instruction_id, sell[0].instruction_id, transaction_price, transaction_number]
             return con_res
 
     # 获取日期时间

@@ -183,7 +183,7 @@ def add_new_deal():
     return Result.success(None)
 
 
-# 审批
+# 审批deal指令
 @account_admin_api.route("/account_admin/handle_deal", methods=["POST"])
 def handle_deal():
     data = json.loads(request.get_data(as_text=True))

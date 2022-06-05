@@ -241,5 +241,9 @@ class AccountAdminDao:
             if temp.l_account_number != securities_account_number:
                 return 0
         deal.status = ifapproval
+        if ifapproval == '通过':
+            fund_account = FundAccount.query.filter_by(securities_account_number="p_333").first()
+            db.session.delete(fund_account)
+            print("delete ok")
         db.session.commit()
         return 1

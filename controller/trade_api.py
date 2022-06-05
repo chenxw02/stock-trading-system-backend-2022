@@ -6,7 +6,7 @@ from util.auth import decode_token
 
 trade_api = Blueprint('trade_api', __name__)
 
-@trade_api.route("/trade/login", methods=["GET"])
+@trade_api.route("/trade/login", methods=["POST"])
 def login():
     data = json.loads(request.get_data(as_text=True))
     token = TradeService.login(data["user_id"], data["password"])
