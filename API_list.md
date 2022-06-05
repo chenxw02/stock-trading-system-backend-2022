@@ -10,6 +10,15 @@ A1均为对账户本身的操作，组内自行对接好了接口，其他组没
 
 ## A3组负责
 
+#### 连续竞价
+
+```python
+from service.con_auc_main import ConAucService
+
+#调用
+ConAucService.con_auc(instruction_id)
+```
+
 
 
 ## A4组负责
