@@ -5,6 +5,7 @@ from model.account_admin import PersonalSecuritiesAccount
 from model.account_admin import LegalPersonSecuritiesAccount
 from model.account_admin import FundAccount
 from sqlalchemy import text
+from sqlalchemy import func
 
 
 # 将一个表的所有简单操作集中成一个dao数据库类
@@ -214,3 +215,31 @@ class AccountAdminDao:
             fund_account_number=fund_account_number, securities_account_number=securities_account_number, status=status,
             balance=balance).all()
         return fund_account
+
+    @staticmethod
+    def get_deal_id():
+        new_id = db.session.query(func.max(Deal.deal_id)).first()[0] + 1
+        return new_id
+
+    @staticmethod
+    def handle_deal(id, ifapproval):
+        deal = Deal.query.get(id)
+        print(deal)
+        securities_account_number = deal.securities_account_number
+        id_num = deal.person_id
+        print(id_num)
+        if securities_account_number[0] == 'p':
+            temp = PersonalSecuritiesAccount.query.filter_by(user_id_number=id_num).first()
+            if temp is None:
+                return -1
+            if temp.p_account_number != securities_account_number:
+                return 0
+        else:
+            temp = LegalPersonSecuritiesAccount.query.filter_by(legal_person_registration_number = id_num).first()
+            if temp is None:
+                return -1
+            if temp.l_account_number != securities_account_number:
+                return 0
+        deal.status = ifapproval
+        db.session.commit()
+        return 1
