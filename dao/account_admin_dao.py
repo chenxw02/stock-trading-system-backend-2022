@@ -246,8 +246,10 @@ class AccountAdminDao:
         else:
             deal.status = "不通过"
         if deal.status == '通过':
-            fund_account = FundAccount.query.filter_by(securities_account_number="p_333").first()
+            print(securities_account_number)
+            fund_account = FundAccount.query.filter_by(securities_account_number=securities_account_number).first()
+            if fund_account is None:
+                return 0
             db.session.delete(fund_account)
-            print("delete ok")
         db.session.commit()
         return 1
