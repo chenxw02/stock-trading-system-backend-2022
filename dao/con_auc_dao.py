@@ -74,25 +74,25 @@ class ConAucDao:
     @staticmethod
     def gettransstock(instr_id):
         instr = Instruction.query.filter(Instruction.stock_id == instr_id)
-        return instr.stock_id
+        return instr[0].stock_id
 
     # 获取买卖标志
     @staticmethod
     def gettransflag(instr_id):
         instr = Instruction.query.filter(Instruction.stock_id == instr_id)
-        return instr.buy_sell_flag
+        return instr[0].buy_sell_flag
 
     # 获取账户编号
     @staticmethod
     def gettransaccount(instr_id):
         instr = Instruction.query.filter(Instruction.stock_id == instr_id)
-        return instr.fund_account_number
+        return instr[0].fund_account_number
 
     # 获取指令编号
     @staticmethod
     def gettransinstr(instr_id):
         instr = Instruction.query.filter(Instruction.stock_id == instr_id)
-        return instr.instruction_id
+        return instr[0].instruction_id
 
     # 生成交易结果
     @staticmethod
