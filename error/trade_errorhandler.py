@@ -1,3 +1,4 @@
+#coding:utf-8
 from flask import Blueprint
 
 from controller.trade_api import trade_api

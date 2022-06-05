@@ -167,7 +167,7 @@ class AggAucDao:
     def dealexpins():
         localtime = time.strftime("%d", time.localtime())
         tmp_time = int(localtime)
-        exp_ins = Instruction.query.filter(int(Instruction.time/1000000) ！= tmp_time).all()
+        exp_ins = Instruction.query.filter(int(Instruction.time/1000000) != tmp_time).all()
         for i in exp_ins:
             i.instruction_state = "E"  # 设置指令为过期状态
             db.session.commit()
