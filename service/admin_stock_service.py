@@ -18,6 +18,8 @@ class AdminStockService:
     @staticmethod
     def get_latest_transaction(stock_id):
         latest_transaction = AdminStockDao.get_latest_transaction(stock_id)
+        if latest_transaction is None:
+            return None
         return {
             "latest_amount": latest_transaction.transaction_number,
             "latest_price": latest_transaction.transaction_price

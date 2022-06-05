@@ -11,12 +11,15 @@ class AdminStockDao:
     def get_permissions(admin_id):
         result = []
         for permission, stock in db.session.query(AdminPermission, Stock).filter(
-                Stock.stock_id == AdminPermission.stock_id and AdminPermission.admin_id == admin_id).all():
-            result.append({
-                "stock_id": stock.stock_id,
-                "stock_name": stock.stock_name,
-                "status": stock.stock_status
-            })
+                Stock.stock_id == AdminPermission.stock_id):
+            if permission.admin_id == admin_id:
+                result.append({
+                    "stock_id": stock.stock_id,
+                    "stock_name": stock.stock_name,
+                    "status": stock.stock_status,
+                    "rise_threshold": stock.rise_threshold,
+                    "fall_threshold": stock.fall_threshold
+                })
         # print(result)
         return result
 
