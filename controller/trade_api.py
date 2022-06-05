@@ -55,8 +55,8 @@ def check_transaction():
     print(res)
 
     if res == 0:
-        TradeService.create_instruction(data["stock_ID"], data["tType"], data['price'], amount, data['uID'])
-        TradeService.freeze_assets(data["stock_ID"], data["tType"], data['price'], amount, data['uID'])
+        TradeService.create_instruction(data["stock_ID"], data["tType"], data['price'], amount, uID)
+        TradeService.freeze_assets(data["stock_ID"], data["tType"], data['price'], amount, uID)
 
         return Result.success(res)
 
