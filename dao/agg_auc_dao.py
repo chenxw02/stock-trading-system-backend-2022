@@ -165,10 +165,9 @@ class AggAucDao:
     #处理过期指令
     @staticmethod
     def dealexpins():
-        localtime = time.strftime("%Y%m%d", time.localtime())
+        localtime = time.strftime("%d", time.localtime())
         tmp_time = int(localtime)
-        tmp_time = tmp_time*1000000
-        exp_ins = Instruction.query.filter(Instruction.time < tmp_time).all()
+        exp_ins = Instruction.query.filter(int(Instruction.time/1000000) ！= tmp_time).all()
         for i in exp_ins:
             i.instruction_state = "E"  # 设置指令为过期状态
             db.session.commit()
@@ -218,10 +217,9 @@ class AggAucDao:
     #获取今日指令
     @staticmethod
     def gettodayins():
-        localtime = time.strftime("%Y%m%d", time.localtime())
+        localtime = time.strftime("%d", time.localtime())
         inttime = int(localtime)
-        inttime = inttime*1000000
-        ins = Instruction.query.filter(Instruction.time > inttime)
+        ins = Instruction.query.filter(int(Instruction.time/1000000) == inttime , Instruction.instruction_state != "E")
         return ins
 
     #设置指令过期
