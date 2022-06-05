@@ -28,3 +28,7 @@ class WithFundAccountError(Exception):
 
 class MulSecuritiesAccountError(Exception):
     pass
+
+
+class InformationErrorOrNotExist(Exception):
+    pass

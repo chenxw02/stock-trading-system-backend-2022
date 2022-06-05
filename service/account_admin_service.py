@@ -3,7 +3,7 @@ import time
 import bcrypt
 from config import jwt_secret_key
 from error.invalid_account import InvalidAccountError, NoneAccountError, FrozenAccountError, ConditionNotMeetError, \
-    NoSecuritiesError, MulOpenAccountError, WithFundAccountError, MulSecuritiesAccountError
+    NoSecuritiesError, MulOpenAccountError, WithFundAccountError, MulSecuritiesAccountError, InformationErrorOrNotExist
 from error.wrong_money import NoMoneyError, MinusMoneyError, RemainMoneyError
 from dao.account_admin_dao import AccountAdminDao
 from model.account_admin import AccountAdmin
@@ -377,7 +377,7 @@ class AccountAdminService:
         security_account = AccountAdminDao.get_legal_person_by_id(legal_register_num)
         if security_account is None:
             # 身份证号码无效
-            raise InvalidAccountError()
+            raise InformationErrorOrNotExist()
         else:
             AccountAdminDao.security_froze(security_account)
 
@@ -388,7 +388,7 @@ class AccountAdminService:
         security_account = AccountAdminDao.get_legal_person_by_id(legal_register_num)
         if security_account is None:
             # 身份证号码无效
-            raise InvalidAccountError()
+            raise InformationErrorOrNotExist()
         else:
             AccountAdminDao.security_thaw(security_account)
 
