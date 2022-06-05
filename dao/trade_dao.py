@@ -59,6 +59,7 @@ class TradeDao:
     @staticmethod
     def get_latest_instruction_ID():
         data = db.session.query(func.max(Instruction.instruction_id)).first()[0]
+        # print (data)
         return data
 
     @staticmethod
