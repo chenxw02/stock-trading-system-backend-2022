@@ -22,16 +22,23 @@ class ConAuc:
     #连续竞价
     @staticmethod
     def continue_auction(inst_id):
+        # print(inst_id)
+        # inst_id = 11
         buy = ConAucDao.getbuyinstr(inst_id)
+        # print(buy[0].instruction_id)
         sell = ConAucDao.getsellinstr(inst_id)
+        # print(sell[0].instruction_id)
+        # print(buy[0].target_price)
         if buy[0].target_price < sell[0].target_price:
             return -1    ##无法交易标志
         else:
             transaction_price = 0.5 * (buy[0].target_price + sell[0].target_price)
+            # print(transaction_price)
             buyrest = buy[0].target_number - buy[0].actual_number
             sellrest = sell[0].target_number - sell[0].actual_number
             transaction_number = min(buyrest, sellrest)
             con_res = [buy[0].instruction_id, sell[0].instruction_id, transaction_price, transaction_number]
+            # print(con_res)
             return con_res
 
     # 获取日期时间
@@ -61,8 +68,8 @@ class ConAuc:
         a_number1 = ConAucDao.gettransaccount(b_id)
         a_number2 = ConAucDao.gettransaccount(s_id)
         t_amount = t_price * t_number
-        t_date = ConAucDao.getnowdata()
-        t_time = ConAucDao.getnowtime()
+        t_date = ConAuc.getnowdata()
+        t_time = ConAuc.getnowtime()
         i_id1 = ConAucDao.gettransinstr(b_id)
         i_id2 = ConAucDao.gettransinstr(s_id)
         t1_id = ConAucDao.updatetransinfo(stock_id, b_s_flag1, a_number1, t_price,
@@ -81,7 +88,7 @@ class ConAuc:
         ConAucDao.updatestockprice(s_id, t_price)
 
         # update K table
-        date = ConAucDao.getstockid(t_id)
+        date = ConAucDao.gettrandate(t_id)
         k_info = ConAucDao.getkinfo(s_id, date)
         h_pri = k_info.highest_price
         l_pri = k_info.lowest_price
@@ -92,10 +99,10 @@ class ConAuc:
 
         ConAucDao.updateendprice(k_id, t_price)
 
-        if (t_price > h_pri or h_pri == None):
+        if (h_pri == None or t_price > h_pri):
             ConAucDao.updatehighestprice(k_id, t_price)
 
-        if (t_price < l_pri or l_pri == None):
+        if (l_pri == None or t_price < l_pri):
             ConAucDao.updatelowestprice(k_id, t_price)
 
         # update instruction

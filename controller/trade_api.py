@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from service.trade_service import TradeService
 from util.result import Result
 from util.auth import decode_token
+from service.con_auc_main import ConAucService
 import time
 
 trade_api = Blueprint('trade_api', __name__)
@@ -55,9 +56,9 @@ def check_transaction():
     print(res)
 
     if res == 0:
-        TradeService.create_instruction(data["stock_ID"], data["tType"], data['price'], amount, uID)
+        t_id = TradeService.create_instruction(data["stock_ID"], data["tType"], data['price'], amount, uID)
         TradeService.freeze_assets(data["stock_ID"], data["tType"], data['price'], amount, uID)
-
+        ConAucService.con_auc(t_id)
         return Result.success(res)
 
     elif res == 1:

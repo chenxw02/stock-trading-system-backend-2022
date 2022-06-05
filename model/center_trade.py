@@ -1,3 +1,5 @@
+from sqlalchemy import text
+
 from exts import db
 
 
@@ -49,4 +51,4 @@ class Transaction(db.Model):
     transaction_number = db.Column(db.Integer, nullable=False)
     transaction_date = db.Column(db.Integer, nullable=False)
     transaction_time= db.Column(db.Integer, nullable=False)
-    transaction_timestamp = db.Column(db.TIMESTAMP(True), nullable=False)
+    transaction_timestamp = db.Column(db.TIMESTAMP(True), nullable=False, server_default=text('CURRENT_TIMESTAMP'))
