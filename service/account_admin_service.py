@@ -578,3 +578,4 @@ class AccountAdminService:
         ifapproval = data["ifapproval"]
         if AccountAdminDao.handle_deal(id,ifapproval) == 0 or AccountAdminDao.handle_deal(id, ifapproval) == -1:
             raise NoneAccountError()
+
