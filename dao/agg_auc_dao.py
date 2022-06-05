@@ -180,7 +180,7 @@ class AggAucDao:
         inttime = int(localtime)
         tmp_k = K.query.filter(K.stock_id == stock_id, K.date < inttime)
         k = tmp_k.query.order_by(db.desc(tmp_k.date)).first()
-        return k
+        return k[0]
 
     #建立K值表
     @staticmethod
@@ -207,13 +207,13 @@ class AggAucDao:
     @staticmethod
     def getstock(ins):
         s = Stock.query.filter(Stock.stock_id == ins.stock_id)
-        return s
+        return s[0]
 
     #获取指令
     @staticmethod
     def getins(ins_id):
         ins = Instruction.query.filter(Instruction.instruction.id == ins_id)
-        return ins
+        return ins[0]
 
     #获取今日指令
     @staticmethod

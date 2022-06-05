@@ -85,18 +85,9 @@ class QueryUserService:
             raise InvalidPaymentAccountError()
         if upgrade_user_temp.authority == "H":
             raise AlreadyAdvance()
-        upgrade_user_temp.authority = "H"
-        QueryUserDao.update(upgrade_user_temp)
         if pay_account_tmp.balance < 50:
             raise LackOfBalance()
+        upgrade_user_temp.authority = "H"
+        QueryUserDao.update(upgrade_user_temp)
         pay_account_tmp.balance -= 50
         PaymentDao.update(pay_account_tmp)
-
-
-
-
-
-
-
-
-
