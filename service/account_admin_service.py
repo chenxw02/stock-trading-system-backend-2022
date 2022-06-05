@@ -10,6 +10,7 @@ from model.account_admin import AccountAdmin
 from model.account_admin import PersonalSecuritiesAccount
 from model.account_admin import LegalPersonSecuritiesAccount
 from model.account_admin import FundAccount
+from model.account_admin import Deal
 from model.account_admin import OwnStock
 
 
@@ -47,6 +48,7 @@ class AccountAdminService:
             temp_result["deal_id"] = temp.deal_id
             temp_result["status"] = temp.status
             temp_result["person_id"] = temp.person_id
+            temp_result["securities_account_number"] = temp.securities_account_number
             result.append(temp_result)
         print("dxp:")
         print(result)
@@ -136,7 +138,6 @@ class AccountAdminService:
             result.append(temp_result)
         print(result)
         return result
-
 
     # 添加个人证券账户
     @staticmethod
@@ -526,7 +527,8 @@ class AccountAdminService:
             raise NoneAccountError()
         if fund_account.account_status == "ok":
             raise ConditionNotMeetError()
-        AccountAdminDao.re_add_fund_account(fund_account, encrypted_login_password, encrypted_trade_password, temp_new_number)
+        AccountAdminDao.re_add_fund_account(fund_account, encrypted_login_password, encrypted_trade_password,
+                                            temp_new_number)
 
     # 证券账户销户
     @staticmethod
@@ -550,3 +552,29 @@ class AccountAdminService:
                 raise WithFundAccountError()
             temp_securities_account = AccountAdminDao.get_personal_by_id(id_num)
             AccountAdminDao.personal_delete_one(temp_securities_account)
+
+    # 增加一条待审批的销户记录
+    @staticmethod
+    def add_new_deal(data):
+        print(data)
+        id_num = data["id_num/legal_register_num"]
+        security_num = data["security_num"]
+        label = data["label"]
+        if label == "0":  # 法人
+            security_num = "l_" + security_num
+        else:
+            security_num = "p_" + security_num
+        deal_information = []
+        deal_id = AccountAdminDao.get_deal_id()
+        deal_information.append(
+            Deal(deal_id=deal_id, securities_account_number=security_num, person_id=id_num, status="待定", event="销户"))
+        AccountAdminDao.insert(deal_information)
+
+    # 处理审批
+    @staticmethod
+    def handle_deal(data):
+        print(data)
+        id = data["deal_id"]
+        ifapproval = data["ifapproval"]
+        if AccountAdminDao.handle_deal(id,ifapproval) == 0 or AccountAdminDao.handle_deal(id, ifapproval) == -1:
+            raise NoneAccountError()

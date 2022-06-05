@@ -173,3 +173,19 @@ def re_add_fund_account():
     data = json.loads(request.get_data(as_text=True))
     AccountAdminService.re_add_fund_account(data)
     return Result.success(None)
+
+
+# 增加一条待审批的销户记录
+@account_admin_api.route("/account_admin/add_new_deal", methods=["POST"])
+def add_new_deal():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.add_new_deal(data)
+    return Result.success(None)
+
+
+# 审批
+@account_admin_api.route("/account_admin/handle_deal", methods=["POST"])
+def handle_deal():
+    data = json.loads(request.get_data(as_text=True))
+    AccountAdminService.handle_deal(data)
+    return Result.success(None)
