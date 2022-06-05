@@ -560,12 +560,14 @@ class AccountAdminService:
         id_num = data["id_num/legal_register_num"]
         security_num = data["security_num"]
         label = data["label"]
-        if label == "0":  # 法人
+        if label == 0:  # 法人
             security_num = "l_" + security_num
         else:
             security_num = "p_" + security_num
+        print(security_num)
         deal_information = []
         deal_id = AccountAdminDao.get_deal_id()
+        print(deal_id)
         deal_information.append(
             Deal(deal_id=deal_id, securities_account_number=security_num, person_id=id_num, status="待定", event="销户"))
         AccountAdminDao.insert(deal_information)

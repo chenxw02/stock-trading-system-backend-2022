@@ -218,7 +218,12 @@ class AccountAdminDao:
 
     @staticmethod
     def get_deal_id():
-        new_id = db.session.query(func.max(Deal.deal_id)).first()[0] + 1
+        new_id = db.session.query(func.max(Deal.deal_id)).first()[0]
+        print(new_id)
+        if new_id is None:
+            new_id = 0
+        new_id = new_id + 1
+
         return new_id
 
     @staticmethod
