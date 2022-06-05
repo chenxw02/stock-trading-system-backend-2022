@@ -293,7 +293,7 @@ response body:
 }
 ```
 
-### GET /admin/latest_transaction
+### POST /admin/latest_transaction
 
 获取股票最新交易的数量和价格。
 
@@ -318,7 +318,7 @@ response body:
 }
 ```
 
-### GET /admin/instruction
+### POST /admin/instruction
 
 获取股票交易指令。B表示买，S表示卖
 

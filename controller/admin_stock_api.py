@@ -11,6 +11,7 @@ admin_stock_api = Blueprint('admin_stock_api', __name__)
 @admin_stock_api.route("/admin/permission", methods=["GET"])
 def get_permissions():
     token = request.headers.get('Authorization')
+    # print(token)
     info = decode_token(token)
     admin_id = info["admin_id"]
     auth_type = info["type"]
@@ -45,7 +46,7 @@ def set_threshold():
     AdminStockService.set_threshold(data["stock_id"], data["rise_threshold"], data["fall_threshold"])
     return Result.success(None)
 
-@admin_stock_api.route("/admin/latest_transaction", methods=["GET"])
+@admin_stock_api.route("/admin/latest_transaction", methods=["POST"])
 def get_latest_transaction():
     data = json.loads(request.get_data(as_text=True))
     token = request.headers.get('Authorization')
@@ -57,7 +58,7 @@ def get_latest_transaction():
     latest_transaction = AdminStockService.get_latest_transaction(data["stock_id"])
     return Result.success(latest_transaction)
 
-@admin_stock_api.route("/admin/instruction", methods=["GET"])
+@admin_stock_api.route("/admin/instruction", methods=["POST"])
 def get_instructions():
     data = json.loads(request.get_data(as_text=True))
     token = request.headers.get('Authorization')
