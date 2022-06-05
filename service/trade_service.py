@@ -11,14 +11,11 @@ class TradeService:
     @staticmethod
     def login(user_id, password):
         user = TradeDao.get(user_id)
-        print(user)
         if user is None:
             raise InvalidAccountError()
         encrypted_password = user.login_password
-        print(encrypted_password, password)
-        # 暂时注释起来
-        # if not bcrypt.checkpw(password.encode("utf-8"), encrypted_password.encode("utf-8")):
-        #     raise InvalidAccountError()
+        if not bcrypt.checkpw(password.encode("utf-8"), encrypted_password.encode("utf-8")):
+            raise InvalidAccountError()
         # raise 以返回账号密码错误
         headers = {
             "alg": "HS256",
@@ -47,15 +44,11 @@ class TradeService:
     @staticmethod
     def show_fund_info(fund_acc_num):
         data = TradeDao.get_fund_info(fund_acc_num)
-        # if data is None:
-        #     raise
         return data
 
     @staticmethod
     def show_own_stock_info(fund_acc_num):
         data = TradeDao.get_own_stock_info(fund_acc_num)
-        # if data is None:
-        #     raise
         return data
 
     @staticmethod
