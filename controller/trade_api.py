@@ -1,4 +1,4 @@
-# coding:utf-8
+#coding:utf-8
 import json
 from flask import Blueprint, request
 from service.trade_service import TradeService
@@ -9,13 +9,11 @@ import time
 
 trade_api = Blueprint('trade_api', __name__)
 
-
 @trade_api.route("/trade/login", methods=["POST"])
 def login():
     data = json.loads(request.get_data(as_text=True))
     token = TradeService.login(data["user_id"], data["password"])
     return Result.success(token)
-
 
 @trade_api.route("/trade/getMaxAmount", methods=["POST"])
 def get_max_amount():
@@ -31,7 +29,6 @@ def get_max_amount():
 
     return Result.success(res)
 
-
 @trade_api.route("/trade/getMinMax", methods=["POST"])
 def get_price_range():
     data = json.loads(request.get_data(as_text=True))
@@ -42,7 +39,6 @@ def get_price_range():
         return Result.error(1, "No stock with this ID!")
 
     return Result.success(res)
-
 
 @trade_api.route("/trade/checkTransaction", methods=["POST"])
 def check_transaction():
@@ -82,7 +78,6 @@ def check_transaction():
     elif res == 10:
         return Result.error(10, "当前非交易时间段！")
 
-
 @trade_api.route("/fund/info", methods=["GET"])
 def fund_info():
     token = request.headers.get('Authorization')
@@ -90,7 +85,6 @@ def fund_info():
     fund_acc_num = info["user_id"]
     res = TradeService.show_fund_info(fund_acc_num)
     return Result.success(res)
-
 
 @trade_api.route("/ownstock/info", methods=["GET"])
 def own_stock_info():
@@ -100,24 +94,20 @@ def own_stock_info():
     res = TradeService.show_own_stock_info(fund_acc_num)
     return Result.success(res)
 
-
 @trade_api.route("/transaction/update", methods=["POST"])
 def update():
     data = json.loads(request.get_data(as_text=True))
-    res = TradeService.update(data["stock_id"], data["fund_account_number"], data["buy_sell_flag"],
-                              data["transaction_amount"], data["transaction_number"])
+    res = TradeService.update(data["stock_id"], data["fund_account_number"], data["buy_sell_flag"], data["transaction_amount"], data["transaction_number"])
     return Result.success(res)
-
 
 @trade_api.route("/stock/info", methods=["POST"])
 def stock_info():
     stock_id = request.headers.get('stock_id')
-    res = TradeService.show_stock_info(stock_id)
-    if (res == 1):
+    res= TradeService.show_stock_info(stock_id)
+    if(res==1):
         return Result.error(1, "没有这只股票！")
     else:
         return Result.success(res)
-
 
 @trade_api.route("/instruction/info", methods=["GET"])
 def instruction_info():
@@ -126,3 +116,18 @@ def instruction_info():
     fund_acc_num = info["user_id"]
     res = TradeService.show_instruction_info(fund_acc_num)
     return Result.success(res)
+
+@trade_api.route("/withdraw", methods=["POST"])
+def withdraw():
+    token = request.headers.get('Authorization')
+    info = decode_token(token)
+    fund_acc_num = info["user_id"]
+    data = json.loads(request.get_data(as_text=True))
+    print(data["keys"])
+    res = TradeService.do_withdraw(fund_acc_num, data["keys"])
+    if(res==1):
+        return Result.error(1, "该委托已被撤销，请勿重复撤单！")
+    elif(res==2):
+        return Result.error(1, "该委托已全部成交，无法撤单！")
+    else:
+        return Result.success(res)
