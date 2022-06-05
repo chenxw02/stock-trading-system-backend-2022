@@ -240,8 +240,12 @@ class AccountAdminDao:
                 return -1
             if temp.l_account_number != securities_account_number:
                 return 0
-        deal.status = ifapproval
-        if ifapproval == '通过':
+        # 判断是否通过
+        if ifapproval == 1:
+            deal.status = "通过"
+        else:
+            deal.status = "不通过"
+        if deal.status == '通过':
             fund_account = FundAccount.query.filter_by(securities_account_number="p_333").first()
             db.session.delete(fund_account)
             print("delete ok")
