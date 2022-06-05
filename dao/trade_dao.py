@@ -1,3 +1,5 @@
+# coding:utf-8
+from calendar import month
 from exts import db
 from model.account_admin import FundAccount
 from model.account_admin import OwnStock
@@ -17,66 +19,58 @@ class TradeDao:
         return user
 
     @staticmethod
-    def check_transaction(sID, tType, price, amount, uID):
-        price = float(price)
-        amount = int(amount)
+    def get_stock(sID):
+        data = db.session.query(Stock.stock_id, Stock.stock_type, Stock.stock_status) \
+            .filter(Stock.stock_id == sID).all()
 
-        data = db.session.query(Stock.stock_id).filter(Stock.stock_id == sID).all()
-        if len(data) == 0:  # if stockID does not exist
-            return 1
-        data = db.session.query(Stock.stock_id).filter(and_(Stock.stock_id == sID, Stock.stock_status != 'F')).all()
-        if len(data) == 0:  # if stockID exists but the stock cannot be traded
-            return 2
+        if len(data) == 0:
+            return None
 
-        kvals = db.session.query(K.k_id, K.stock_id, K.end_price, K.date).filter(K.stock_id == sID).all()
-        kvals.sort(key=lambda a: a[3], reverse=True)  # find last days ending price
-        type = db.session.query(Stock.stock_type).filter(Stock.stock_id == sID).all()[0][0]  # find stock type
-
-        # calculate the minimum price according to the stock type
-        if (type == 'S'):
-            min_price = kvals[0][2] + (kvals[0][2] * 0.05)
-        else:
-            min_price = kvals[0][2] + (kvals[0][2] * 0.1)
-
-        if price < min_price and tType == 'buy':  # if the buying price is too low
-            return 3
-
-        if tType == 'buy':
-            funds = db.session.query(FundAccount.balance, FundAccount.frozen, FundAccount.taken) \
-                .filter(FundAccount.fund_account_number == uID).first()
-
-            available = funds[0] - funds[1] - funds[2]
-            total_price = price * amount
-            if available < total_price:  # if the user does not have enough funds for the transaction
-                return 4
-        else:
-            stock_own = db.session.query(OwnStock.own_number, OwnStock.frozen) \
-                .filter(and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == uID)).all()[0]
-
-            stock_own_count = stock_own[0] - stock_own[1]
-
-            if stock_own_count < amount:  # if the user does not have enough stock for the transaction
-                return 5
-
-        return 0  # else all is well
+        res = {"ID": data[0][0], "type": data[0][1], "status": data[0][2]}
+        return res
 
     @staticmethod
-    def create_instruction(sID, tType, price, amount, uID):
-        price = float(price)
-        amount = int(amount)
+    def get_K_endprice(sID):
+        data = db.session.query(K.k_id, K.stock_id, K.end_price, K.date) \
+            .filter(and_(K.stock_id == sID, K.end_price.isnot(None))).order_by(K.date.desc()).first()
 
-        if tType == 'buy':
-            tType = 'B'
-        else:
-            tType = 'S'
+        if data is None or len(data) == 0:
+            return None
 
-        new_tID = int(db.session.query(func.max(Instruction.instruction_id)).first()[0]) + 1
-        print(new_tID)
-        time = int(datetime.datetime.now().strftime('%d'))
-        if new_tID is None:
-            new_tID = 1
+        res = {"endprice": data[2], "date": data[3]}
+        return res
+
+    @staticmethod
+    def get_user_funds(uID):
+        data = db.session.query(FundAccount.balance, FundAccount.frozen, FundAccount.taken) \
+            .filter(FundAccount.fund_account_number == uID).first()
+        res = {"balance": data[0], "frozen": data[1], "taken": data[2]}
+        return res
+
+    @staticmethod
+    def get_user_stock(uID, sID):
+        data = db.session.query(OwnStock.own_number, OwnStock.frozen) \
+            .filter(and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == uID)).first()
+        if data is None or len(data) == 0:
+            return None
+        res = {"own": data[0], "frozen": data[1]}
+        return res
+
+    @staticmethod
+    def get_latest_instruction_ID():
+        data = db.session.query(func.max(Instruction.instruction_id)).first()[0]
+        return data
+
+    @staticmethod
+    def freeze_funds(uID, total_price):
+        funds = FundAccount.query.filter(FundAccount.fund_account_number == uID).first()
+        funds.frozen += total_price
+        db.session.commit()
+
+    @staticmethod
+    def create_instruction(sID, tType, price, amount, uID, tID, time):
         newInstruction = Instruction()
-        newInstruction.instruction_id = new_tID
+        newInstruction.instruction_id = tID
         newInstruction.stock_id = sID
         newInstruction.fund_account_number = uID
         newInstruction.buy_sell_flag = tType
@@ -90,18 +84,11 @@ class TradeDao:
         db.session.commit()
 
     @staticmethod
-    def freeze_assets(sID, tType, price, amount, uID):
-        price = float(price)
-        amount = int(amount)
-        if tType == 'buy':
-            totalPrice = price * amount
-            funds = FundAccount.query.filter(FundAccount.fund_account_number == uID).first()
-            funds.frozen += totalPrice
-            db.session.commit()
-        else:
-            stock_own = OwnStock.query.filter(
-                and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == uID)).first()
-            stock_own.frozen += amount
+    def freeze_stock(sID, uID, amount):
+        stock_own = OwnStock.query.filter(
+            and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == uID)).first()
+        stock_own.frozen += amount
+        db.session.commit()
 
     @staticmethod
     def get_fund_info(fund_acc_num):
@@ -170,3 +157,53 @@ class TradeDao:
                 own_stock.own_number += num
                 own_stock.own_amount += amount
         db.session.commit()
+
+    @staticmethod
+    def get_stock_info(stock_id):
+        data = db.session.query(Stock.stock_name, Stock.price, Stock.stock_type, Stock.stock_status).filter(
+            Stock.stock_id == stock_id).all()
+        if len(data) == 0:
+            return None
+        else:
+            # 获取当日日期
+            now_date = int(datetime.datetime.now().strftime('%Y%m%d'))
+            if (datetime.datetime.now().day < 7):
+                weekflag = now_date - 76
+            else:
+                weekflag = now_date - 6
+
+            data2 = db.session.query(K.start_price, K.lowest_price, K.highest_price, K.trade_amount).filter(
+                K.stock_id == stock_id and K.date == now_date).all()
+            data3 = db.session.query(func.max(K.highest_price), func.min(K.lowest_price)).filter(
+                K.stock_id == stock_id and K.date >= weekflag).one()
+            data4 = db.session.query(func.max(K.highest_price), func.min(K.lowest_price)).filter(
+                K.stock_id == stock_id and K.date >= now_date - 29).one()
+            data5 = db.session.query(K.end_price) \
+                .filter(and_(K.stock_id == stock_id, K.end_price.isnot(None))).order_by(K.date.desc()).first()
+            print(data5)
+
+            res = {"id": stock_id, "name": data[0][0], "price": data[0][1], "type": data[0][2], "state": data[0][3],
+                   "start": data2[0][0], "volume": data2[0][3], "Dlow": data2[0][1], "Dhigh": data2[0][2],
+                   "Wlow": data3[1], "Whigh": data3[0], "Mlow": data4[1], "Mhigh": data4[0], "end": data5[0]}
+            print(res)
+            return res
+
+    @staticmethod
+    def get_instruction_info(fund_acc_num):
+        now_day = str(datetime.datetime.now().strftime('%d'))
+        tempflag1 = now_day + '000000'
+        tempflag2 = now_day + '235959'
+        flag1 = int(tempflag1)
+        flag2 = int(tempflag2)
+        data = db.session.query(Instruction.buy_sell_flag, Instruction.stock_id, Instruction.target_price,
+                                Instruction.total_amount, Instruction.target_number, Instruction.actual_number,
+                                Instruction.instruction_state, Instruction.time, Stock.stock_name).join(Stock).filter(
+            Instruction.stock_id == Stock.stock_id and Instruction.fund_account_number == fund_acc_num and Instruction.time > flag1 and Instruction.time < flag2).all()
+        res = []
+        content = {}
+        for i in data:
+            content = {"flag": i[0], "id": i[1], "tprice": i[2], "amount": i[3], "tnum": i[4], "anum": i[5],
+                       "state": i[6], "time": i[7], "name": i[8]}
+            res.append(content)
+        print(res)
+        return res
