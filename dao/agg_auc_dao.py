@@ -194,8 +194,8 @@ class AggAucDao:
             k = K()
             k.k_id = tmpkid
             k.stock_id = i.stock_id
-            k.start_price = tmpk.start_price
-            k.end_price = tmpk.end_price
+            k.start_price = tmpk[0].start_price
+            k.end_price = tmpk[0].end_price
             k.trade_number = 0
             k.trade_amount = 0
             k.date = inttime
@@ -211,7 +211,7 @@ class AggAucDao:
     #获取指令
     @staticmethod
     def getins(ins_id):
-        ins = Instruction.query.filter(Instruction.instruction.id == ins_id)
+        ins = Instruction.query.filter(Instruction.instruction_id == ins_id)
         return ins[0]
 
     #获取今日指令
@@ -226,5 +226,5 @@ class AggAucDao:
     @staticmethod
     def setexp(ins_id):
         ins = Instruction.query.filter(Instruction.instruction_id == ins_id)
-        ins.instruction_state = "E"
+        ins[0].instruction_state = "E"
         db.session.commit()

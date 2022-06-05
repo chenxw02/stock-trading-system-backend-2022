@@ -28,7 +28,7 @@ class ConAucDao:
     # 获取指令信息
     @staticmethod
     def getins(ins_id):
-        ins = Instruction.query.filter(Instruction.instruction.id == ins_id)
+        ins = Instruction.query.filter(Instruction.instruction_id == ins_id)
         return ins[0]
 
     # 设置不在涨跌幅阈值内的指令为过期指令
