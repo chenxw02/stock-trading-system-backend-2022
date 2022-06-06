@@ -17,10 +17,10 @@ class TradeService:
             raise InvalidAccountError()
         encrypted_password = user.login_password
         print(encrypted_password, password)
-        # 暂时注释起来
-        # if not bcrypt.checkpw(password.encode("utf-8"), encrypted_password.encode("utf-8")):
-        #     raise InvalidAccountError()
-            # raise 以返回账号密码错误
+       
+        if not bcrypt.checkpw(password.encode("utf-8"), encrypted_password.encode("utf-8")):
+            raise InvalidAccountError()
+            
         headers = {
             "alg": "HS256",
             "typ": "JWT"
@@ -70,13 +70,9 @@ class TradeService:
         if k_data is None:
             return None
 
-        if (stock_data["type"] == 'S'):
-            max_price = k_data["endprice"] + (k_data["endprice"] * 0.05)
-            min_price = k_data["endprice"] - (k_data["endprice"] * 0.05)
-        else:
-            max_price = k_data["endprice"] + (k_data["endprice"] * 0.10)
-            min_price = k_data["endprice"] - (k_data["endprice"] * 0.10)
-
+        max_price = k_data["endprice"] + (k_data["endprice"] * stock_data["up"]/100)
+        min_price = k_data["endprice"] - (k_data["endprice"] * stock_data["down"]/100)
+    
         return (max_price, min_price)
 
     @staticmethod
@@ -137,13 +133,11 @@ class TradeService:
         k_data = TradeDao.get_K_endprice(sID) #get last days k data
         print(k_data)
 
-        # calculate the minimum price according to the stock type
-        if (stock_data["type"] == 'S'):
-            max_price = k_data["endprice"] + (k_data["endprice"] * 0.05)
-            min_price = k_data["endprice"] - (k_data["endprice"] * 0.05)
-        else:
-            max_price = k_data["endprice"] + (k_data["endprice"] * 0.1)
-            min_price = k_data["endprice"] - (k_data["endprice"] * 0.1)
+        # calculate the minimum price according to up&downs
+        
+        max_price = k_data["endprice"] + (k_data["endprice"] * stock_data["up"]/100)
+        min_price = k_data["endprice"] - (k_data["endprice"] * stock_data["down"]/100 )
+       
         print(max_price, min_price)
         if price < min_price:
             return 3    #if the buying price is too low
@@ -199,9 +193,9 @@ class TradeService:
         return data
 
     @staticmethod
-    def update(stock_id, fund_acc_num, buy_sell_flag, amount, num):
+    def update(stock_id, fund_acc_num, buy_sell_flag, amount, num, ins_id):
         #账户和flag对调
-        data = TradeDao.update(stock_id, fund_acc_num, buy_sell_flag, amount, num)
+        data = TradeDao.update(stock_id, fund_acc_num, buy_sell_flag, amount, num, ins_id)
         return data
    
     @staticmethod
