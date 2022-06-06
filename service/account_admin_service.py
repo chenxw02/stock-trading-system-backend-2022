@@ -505,14 +505,14 @@ class AccountAdminService:
     def re_add_fund_account(data):
         id_num = data["id_num/legal_register_num"]
         label = data["label"]
-        if label == 0:
+        if label == 1:
             result = AccountAdminDao.get_legal_person_by_id(id_num)
         else:
             result = AccountAdminDao.get_personal_by_id(id_num)
         # 没有对应的账号
         if result is None:
             raise NoneAccountError()
-        if label == 0:
+        if label == 1:
             security_num = result.l_account_number
         else:
             security_num = result.p_account_number
