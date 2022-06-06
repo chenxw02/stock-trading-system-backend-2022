@@ -59,7 +59,6 @@ class TradeDao:
     @staticmethod
     def get_latest_instruction_ID():
         data = db.session.query(func.max(Instruction.instruction_id)).first()[0]
-        # print (data)
         return data
 
     @staticmethod
@@ -122,10 +121,10 @@ class TradeDao:
     @staticmethod
     def update(sid, fund_acc_num, buy_sell_flag, amount, num):
         # 查询证券账户号码
-        sec = db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number == fund_acc_num).all()[0][0]
+        sec = db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number == fund_acc_num).one()
         
         fund_acc = FundAccount.query.filter(FundAccount.fund_account_number == fund_acc_num).first()
-        own_stock = OwnStock.query.filter(and_(OwnStock.securities_account_number == sec, OwnStock.stock_id == sid)).first()
+        own_stock = OwnStock.query.filter(OwnStock.securities_account_number == sec and OwnStock.stock_id == sid).first()
         
         if buy_sell_flag == 'S': #卖
             fund_acc.taken -= amount
@@ -182,11 +181,12 @@ class TradeDao:
         tempflag2=now_day+'235959'
         flag1=int(tempflag1)
         flag2=int(tempflag2)
-        data=db.session.query(Instruction.buy_sell_flag, Instruction.stock_id, Instruction.target_price, Instruction.total_amount, Instruction.target_number, Instruction.actual_number, Instruction.instruction_state, Instruction.time, Stock.stock_name).join(Stock).filter(Instruction.stock_id==Stock.stock_id and Instruction.fund_account_number==fund_acc_num and Instruction.time>flag1 and Instruction.time<flag2).all()
+        data=db.session.query(Instruction.buy_sell_flag, Instruction.stock_id, Instruction.target_price, Instruction.total_amount, Instruction.target_number, Instruction.actual_number, Instruction.instruction_state, Instruction.time).join(Stock).filter(Instruction.fund_account_number==fund_acc_num and Instruction.time>flag1 and Instruction.time<flag2).all()
         res = []
         content = {}
         for i in data:
-            content = {"flag": i[0], "id": i[1], "tprice": i[2], "amount": i[3], "tnum": i[4], "anum": i[5], "state": i[6], "time": i[7], "name": i[8]}
+            name=db.session.query(Stock.stock_name).filter(Stock.stock_id==i[1])
+            content = {"flag": i[0], "id": i[1], "tprice": i[2], "amount": i[3], "tnum": i[4], "anum": i[5], "state": i[6], "time": i[7], "name":name[0][0]}
             res.append(content)
         print(res)
         return res
