@@ -1,5 +1,6 @@
 #coding:utf-8
 from calendar import month
+from tabnanny import check
 from exts import db
 from model.account_admin import FundAccount
 from model.account_admin import OwnStock
@@ -20,19 +21,20 @@ class TradeDao:
 
     @staticmethod
     def get_stock(sID):
-        data = db.session.query(Stock.stock_id, Stock.stock_type, Stock.stock_status) \
+        data = db.session.query(Stock.stock_id, Stock.stock_type, Stock.stock_status, Stock.rise_threshold, Stock.fall_threshold) \
             .filter(Stock.stock_id == sID).all()
 
         if len(data) == 0:
             return None
 
-        res = {"ID": data[0][0], "type": data[0][1], "status": data[0][2]}
+        res = {"ID": data[0][0], "type": data[0][1], "status": data[0][2], "up": data[0][3], "down": data[0][4]}
         return res
 
     @staticmethod
     def get_K_endprice(sID):
+        now_date = int(datetime.datetime.now().strftime('%Y%m%d'))
         data = db.session.query(K.k_id, K.stock_id, K.end_price, K.date) \
-            .filter(and_(K.stock_id == sID, K.end_price.isnot(None))).order_by(K.date.desc()).first()
+            .filter(and_(K.stock_id == sID, K.end_price.isnot(None), K.date!=now_date)).order_by(K.date.desc()).first()
 
         if data is None or len(data) == 0:
             return None
@@ -98,6 +100,19 @@ class TradeDao:
     @staticmethod
     def get_fund_info(fund_acc_num):
         data = db.session.query(FundAccount.balance, FundAccount.frozen, FundAccount.taken).filter(FundAccount.fund_account_number == fund_acc_num).all()
+        ser_num=db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number==fund_acc_num).all()
+        stocks=db.session.query(OwnStock.stock_id, OwnStock.own_number ,OwnStock.own_amount).filter(OwnStock.securities_account_number==ser_num[0][0]).all()
+        float=0
+        thistaken=0
+        for i in stocks:
+            pricenow=db.session.query(Stock.price).filter(Stock.stock_id== i[0]).all()
+            tempfloat=pricenow[0][0]* i[1]-i[2]
+            tempthistaken=pricenow[0][0]*i[1]
+            thistaken += tempthistaken
+            float += tempfloat
+        print(float)
+        print(thistaken)
+
         # 获取当日日期
         now_date = int(datetime.datetime.now().strftime('%Y%m%d'))
         data2 = db.session.query(func.sum(Transaction.transaction_amount)).filter(and_(Transaction.transaction_date == now_date, Transaction.fund_account_number == fund_acc_num, Transaction.buy_sell_flag == 'S')).all()
@@ -105,7 +120,7 @@ class TradeDao:
             data2 = 0
         else:
             data2 = data2[0][0]
-        res = {"fund_account_number": fund_acc_num, "balance": data[0][0], "frozen": data[0][1], "taken": data[0][2], "sellamount": data2}
+        res = {"fund_account_number": fund_acc_num, "balance": data[0][0]+float, "frozen": data[0][1], "taken": thistaken, "sellamount": data2}
         return res
 
     @staticmethod
@@ -124,31 +139,41 @@ class TradeDao:
 
 
     @staticmethod
-    def update(sid, fund_acc_num, buy_sell_flag, amount, num):
+    def update(sid, fund_acc_num, buy_sell_flag, amount, num, ins_id):
         # 查询证券账户号码
 
         sec = db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number == fund_acc_num).one()
         print("###############", sec[0])
+        print(sid)
         
         fund_acc = FundAccount.query.filter(FundAccount.fund_account_number == fund_acc_num).first()
-        own_stock = OwnStock.query.filter(OwnStock.securities_account_number == sec[0] and OwnStock.stock_id == sid).first()
+        own_stock = OwnStock.query.filter(and_(OwnStock.securities_account_number == sec[0], OwnStock.stock_id == sid)).first()
         
         if buy_sell_flag == 'S': #卖
-            if fund_acc.taken<amount:
-                fund_acc.taken=0
-            else:
-                fund_acc.taken -= amount
-
+            value_now=(own_stock.own_amount/own_stock.own_number)*num
+            float=amount-value_now
+            
             own_stock.own_number -= num
             own_stock.frozen -= num
             own_stock.own_amount -= amount
             if own_stock.own_number == 0: #股票已全部卖出
+                
+                fund_acc.balance += float
                 db.session.delete(own_stock)
+
         else: #买
-            fund_acc.taken += amount
-            fund_acc.frozen -= amount
+
+            check=db.session.query(Instruction.target_number, Instruction.actual_number, Instruction.target_price, Instruction.total_amount, Instruction.instruction_state).filter(and_(Instruction.instruction_id==ins_id, Instruction.fund_account_number==fund_acc_num)).all()
+            print('*****',check[0][0], check[0][1], check[0][3], check[0][4])
+            if(check[0][4]=='T'):
+                myamount=check[0][0]*check[0][2]-check[0][3]
+                fund_acc.frozen -= myamount
+                fund_acc.frozen -= amount
+            else:
+                fund_acc.frozen -= amount
 
             if own_stock is None: #own_stock里没有该股票的记录
+                print("*****")
                 data = OwnStock(stock_id=sid, securities_account_number=sec[0], own_number=num, frozen=0, own_amount=amount)
                 db.session.add(data)
             else:
@@ -223,7 +248,7 @@ class TradeDao:
                     stocknum=thisone.target_number-thisone.actual_number
                     stockid=thisone.stock_id
                     ser_num=db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number==fund_acc_num).one()
-                    stockone=OwnStock.query.filter(OwnStock.stock_id==stockid and OwnStock.securities_account_number==ser_num).one()
+                    stockone=OwnStock.query.filter(and_(OwnStock.stock_id==stockid, OwnStock.securities_account_number==ser_num[0])).one()
                     print(stocknum)
                     print(stockone.frozen)
                     stockone.frozen -=stocknum
