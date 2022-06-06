@@ -67,6 +67,7 @@ class TradeDao:
     def freeze_funds(uID, total_price):
         funds = FundAccount.query.filter(FundAccount.fund_account_number == uID).first()
         funds.frozen += total_price
+        print(funds.frozen)
         db.session.commit()
 
     @staticmethod
@@ -87,8 +88,10 @@ class TradeDao:
 
     @staticmethod
     def freeze_stock(sID, uID, amount):
+        ser_num=db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number==uID).all()
+        print("########",ser_num[0][0])
         stock_own = OwnStock.query.filter(
-            and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == uID)).first()
+            and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == ser_num[0][0])).first()
         stock_own.frozen += amount
         db.session.commit()
 
@@ -131,8 +134,10 @@ class TradeDao:
         own_stock = OwnStock.query.filter(OwnStock.securities_account_number == sec[0] and OwnStock.stock_id == sid).first()
         
         if buy_sell_flag == 'S': #卖
-            fund_acc.taken -= amount
-            fund_acc.frozen -= amount
+            if fund_acc.taken<amount:
+                fund_acc.taken=0
+            else:
+                fund_acc.taken -= amount
 
             own_stock.own_number -= num
             own_stock.frozen -= num
@@ -144,7 +149,7 @@ class TradeDao:
             fund_acc.frozen -= amount
 
             if own_stock is None: #own_stock里没有该股票的记录
-                data = OwnStock(stock_id=sid, securities_account_number=sec, own_number=num, frozen=0, own_amount=amount)
+                data = OwnStock(stock_id=sid, securities_account_number=sec[0], own_number=num, frozen=0, own_amount=amount)
                 db.session.add(data)
             else:
                 own_stock.own_number += num
