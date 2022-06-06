@@ -26,8 +26,18 @@ class ConAuc:
         # inst_id = 11
         buy = ConAucDao.getbuyinstr(inst_id)
         # print(buy[0].instruction_id)
+        # print(buy)
+        if buy:
+            1
+        else:
+            return -1
         sell = ConAucDao.getsellinstr(inst_id)
+        # print(sell)
         # print(sell[0].instruction_id)
+        if sell:
+            1
+        else:
+            return -1
         # print(buy[0].target_price)
         if buy[0].target_price < sell[0].target_price:
             return -1    ##无法交易标志
@@ -121,3 +131,4 @@ class ConAuc:
             flag = 'P'
 
         ConAucDao.updateinsttype(i_id, flag)
+        ConAucDao.updatekinfo(k_id, t_number, t_amount)
