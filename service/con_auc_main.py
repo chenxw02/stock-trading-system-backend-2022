@@ -18,11 +18,11 @@ class ConAucService:
         # 生成结果
         t_id = ConAuc.createtransres(con_res)
         # 更新数据
-        ConAuc.update(t_id[0])
-        ConAuc.update(t_id[1])
-        tran_list0 = (t_id[0])[:3] + (t_id[0])[4:6]
-        tran_list1 = (t_id[1])[:3] + (t_id[1])[4:6]
+        ConAuc.update(t_id[0].transaction_id)
+        ConAuc.update(t_id[1].transaction_id)
+        tran_list0 = [t_id[0].stock_id, t_id[0].fund_account_number, t_id[0].buy_sell_flag, t_id[0].transaction_amount, t_id[0].transaction_number]
+        tran_list1 = [t_id[1].stock_id, t_id[1].fund_account_number, t_id[1].buy_sell_flag, t_id[1].transaction_amount, t_id[1].transaction_number]
         print(tran_list0)
-        TradeService.update(tran_list0[0], tran_list0[2], tran_list0[1], tran_list0[3], tran_list0[4])
-        TradeService.update(tran_list1[0], tran_list1[2], tran_list1[1], tran_list1[3], tran_list1[4])
+        TradeService.update(tran_list0[0], tran_list0[1], tran_list0[2], tran_list0[3], tran_list0[4])
+        TradeService.update(tran_list1[0], tran_list1[1], tran_list1[2], tran_list1[3], tran_list1[4])
         return t_id

@@ -49,8 +49,10 @@ class TradeDao:
 
     @staticmethod
     def get_user_stock(uID, sID):
+        ser_num=db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number==uID)
+        print(ser_num[0][0])
         data = db.session.query(OwnStock.own_number, OwnStock.frozen) \
-            .filter(and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == uID)).first()
+            .filter(and_(OwnStock.stock_id == sID, OwnStock.securities_account_number == ser_num[0][0])).first()
         if data is None or len(data) == 0:
             return None
         res = {"own": data[0], "frozen": data[1]}
@@ -121,10 +123,12 @@ class TradeDao:
     @staticmethod
     def update(sid, fund_acc_num, buy_sell_flag, amount, num):
         # 查询证券账户号码
+
         sec = db.session.query(FundAccount.securities_account_number).filter(FundAccount.fund_account_number == fund_acc_num).one()
+        print("###############", sec[0])
         
         fund_acc = FundAccount.query.filter(FundAccount.fund_account_number == fund_acc_num).first()
-        own_stock = OwnStock.query.filter(OwnStock.securities_account_number == sec and OwnStock.stock_id == sid).first()
+        own_stock = OwnStock.query.filter(OwnStock.securities_account_number == sec[0] and OwnStock.stock_id == sid).first()
         
         if buy_sell_flag == 'S': #卖
             fund_acc.taken -= amount

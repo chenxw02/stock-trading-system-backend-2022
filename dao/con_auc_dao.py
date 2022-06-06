@@ -132,7 +132,7 @@ class ConAucDao:
         trans.transaction_id = random.random()
         db.session.add(trans)
         db.session.commit()
-        return trans.transaction_id
+        return trans
 
     # update data
     @staticmethod

@@ -153,7 +153,7 @@ class TradeService:
             return 8
         elif amount%100!=0:
             return 9
-        elif timenow < 91500 or (timenow >113000 and timenow<130000) or timenow>150000:
+        elif timenow < 0 or (timenow >113000 and timenow<130000) or timenow>240000:
             return 10
 
 
