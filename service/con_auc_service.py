@@ -121,3 +121,4 @@ class ConAuc:
             flag = 'P'
 
         ConAucDao.updateinsttype(i_id, flag)
+        ConAucDao.updatekinfo(k_id, t_number, t_amount)
