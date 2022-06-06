@@ -22,6 +22,7 @@ class ConAucService:
         ConAuc.update(t_id[1])
         tran_list0 = (t_id[0])[:3] + (t_id[0])[4:6]
         tran_list1 = (t_id[1])[:3] + (t_id[1])[4:6]
-        TradeService.update(tran_list0[0], tran_list0[1], tran_list0[2], tran_list0[3], tran_list0[4])
-        TradeService.update(tran_list1[0], tran_list1[1], tran_list1[2], tran_list1[3], tran_list1[4])
+        print(tran_list0)
+        TradeService.update(tran_list0[0], tran_list0[2], tran_list0[1], tran_list0[3], tran_list0[4])
+        TradeService.update(tran_list1[0], tran_list1[2], tran_list1[1], tran_list1[3], tran_list1[4])
         return t_id

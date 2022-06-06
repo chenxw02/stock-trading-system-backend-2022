@@ -26,11 +26,17 @@ class ConAuc:
         # inst_id = 11
         buy = ConAucDao.getbuyinstr(inst_id)
         # print(buy[0].instruction_id)
-        if buy is None:
+        # print(buy)
+        if buy:
+            1
+        else:
             return -1
         sell = ConAucDao.getsellinstr(inst_id)
+        # print(sell)
         # print(sell[0].instruction_id)
-        if sell is None:
+        if sell:
+            1
+        else:
             return -1
         # print(buy[0].target_price)
         if buy[0].target_price < sell[0].target_price:
