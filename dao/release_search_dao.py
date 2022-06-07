@@ -24,7 +24,7 @@ class ReleaseSearchDao:
             ret3 = {}
             ret2 = db.session.query(K.start_price, K.end_price, K.highest_price, K.lowest_price).filter(K.stock_id==i[0]).order_by(K.date.desc()).all()
             #ret3 = db.session.query(Transaction.buy_sell_flag, Transaction.transaction_price, Transaction.transaction_amount, Transaction.transaction_number, Transaction.transaction_date, Transaction.transaction_time).filter(Transaction.stock_id==i[0]).order_by(Transaction.transaction_date.desc()).all()
-            ret3 = db.session.query(Transaction.buy_sell_flag, Transaction.transaction_price, Transaction.transaction_amount, Transaction.transaction_number, Transaction.transaction_date, Transaction.transaction_time).filter(Transaction.stock_id==i[0]).order_by(Transaction.transaction_date.desc(), Transaction.transaction_time.desc()).all()
+            ret3 = db.session.query(Transaction.buy_sell_flag, Transaction.transaction_price, Transaction.transaction_amount, Transaction.transaction_number, Transaction.transaction_date, Transaction.transaction_time).filter(and_(Transaction.stock_id==i[0], Transaction.buy_sell_flag=='B')).order_by(Transaction.transaction_date.desc(), Transaction.transaction_time.desc()).all()
             #print(ret2)
             #print(ret3)
             for j in ret2:
