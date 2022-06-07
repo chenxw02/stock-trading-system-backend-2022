@@ -10,9 +10,8 @@ class AdminStockDao:
     @staticmethod
     def get_permissions(admin_id):
         result = []
-        for permission, stock in db.session.query(AdminPermission, Stock).filter(
-                Stock.stock_id == AdminPermission.stock_id):
-            if permission.admin_id == admin_id:
+        if admin_id == "root":
+            for stock in Stock.query.all():
                 result.append({
                     "stock_id": stock.stock_id,
                     "stock_name": stock.stock_name,
@@ -20,6 +19,17 @@ class AdminStockDao:
                     "rise_threshold": stock.rise_threshold,
                     "fall_threshold": stock.fall_threshold
                 })
+        else:
+            for permission, stock in db.session.query(AdminPermission, Stock).filter(
+                    Stock.stock_id == AdminPermission.stock_id):
+                if permission.admin_id == admin_id:
+                    result.append({
+                        "stock_id": stock.stock_id,
+                        "stock_name": stock.stock_name,
+                        "status": stock.stock_status,
+                        "rise_threshold": stock.rise_threshold,
+                        "fall_threshold": stock.fall_threshold
+                    })
         # print(result)
         return result
 
