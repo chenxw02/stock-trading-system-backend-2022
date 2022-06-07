@@ -564,7 +564,7 @@ class AccountAdminService:
             security_num = "l_" + security_num
         else:
             security_num = "p_" + security_num
-        print(security_num)
+        # print(security_num)
         temp_account = AccountAdminDao.get_personal(security_num)
         if temp_account is None:
             raise InformationErrorOrNotExist()
@@ -572,7 +572,7 @@ class AccountAdminService:
             raise InformationErrorOrNotExist()
         deal_information = []
         deal_id = AccountAdminDao.get_deal_id()
-        print(deal_id)
+        # print(deal_id)
         deal_information.append(
             Deal(deal_id=deal_id, securities_account_number=security_num, person_id=id_num, status="待定", event="销户"))
         AccountAdminDao.insert(deal_information)
