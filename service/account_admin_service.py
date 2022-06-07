@@ -505,14 +505,14 @@ class AccountAdminService:
     def re_add_fund_account(data):
         id_num = data["id_num/legal_register_num"]
         label = data["label"]
-        if label == 0:
+        if label == 1:
             result = AccountAdminDao.get_legal_person_by_id(id_num)
         else:
             result = AccountAdminDao.get_personal_by_id(id_num)
         # 没有对应的账号
         if result is None:
             raise NoneAccountError()
-        if label == 0:
+        if label == 1:
             security_num = result.l_account_number
         else:
             security_num = result.p_account_number
@@ -564,10 +564,15 @@ class AccountAdminService:
             security_num = "l_" + security_num
         else:
             security_num = "p_" + security_num
-        print(security_num)
+        # print(security_num)
+        temp_account = AccountAdminDao.get_personal(security_num)
+        if temp_account is None:
+            raise InformationErrorOrNotExist()
+        if temp_account.user_id_number != id_num:
+            raise InformationErrorOrNotExist()
         deal_information = []
         deal_id = AccountAdminDao.get_deal_id()
-        print(deal_id)
+        # print(deal_id)
         deal_information.append(
             Deal(deal_id=deal_id, securities_account_number=security_num, person_id=id_num, status="待定", event="销户"))
         AccountAdminDao.insert(deal_information)

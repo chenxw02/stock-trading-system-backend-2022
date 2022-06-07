@@ -12,6 +12,14 @@ import time
 
 class ConAucDao:
 
+    @staticmethod
+    def updatekinfo(k_id, t_number, t_amount):
+        k_info = K.query.filter(K.k_id == k_id)
+        for i in k_info:
+            i.trade_amount = i.trade_amount + t_amount
+            i.trade_number = i.trade_number + t_number
+            db.session.commit()
+
     # 获取昨日K值表
     @staticmethod
     def getyesterdayk(stock_id):
@@ -124,7 +132,7 @@ class ConAucDao:
         trans.transaction_id = random.random()
         db.session.add(trans)
         db.session.commit()
-        return trans.transaction_id
+        return trans
 
     # update data
     @staticmethod

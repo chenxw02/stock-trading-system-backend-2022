@@ -54,6 +54,7 @@ def check_transaction():
     if res == 0:
         t_id = TradeService.create_instruction(data["stock_ID"], data["tType"], data['price'], amount, uID)
         TradeService.freeze_assets(data["stock_ID"], data["tType"], data['price'], amount, uID)
+
         ConAucService.con_auc(t_id)
         return Result.success(res)
 
