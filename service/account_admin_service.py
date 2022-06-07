@@ -565,6 +565,11 @@ class AccountAdminService:
         else:
             security_num = "p_" + security_num
         print(security_num)
+        temp_account = AccountAdminDao.get_personal(security_num)
+        if temp_account is None:
+            raise InformationErrorOrNotExist()
+        if temp_account.user_id_number != id_num:
+            raise InformationErrorOrNotExist()
         deal_information = []
         deal_id = AccountAdminDao.get_deal_id()
         print(deal_id)
