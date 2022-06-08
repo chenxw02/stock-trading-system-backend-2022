@@ -215,7 +215,7 @@ class TradeDao:
         tempflag2=now_day+'235959'
         flag1=int(tempflag1)
         flag2=int(tempflag2)
-        data=db.session.query(Instruction.buy_sell_flag, Instruction.stock_id, Instruction.target_price, Instruction.total_amount, Instruction.target_number, Instruction.actual_number, Instruction.instruction_state, Instruction.time).join(Stock).filter(Instruction.fund_account_number==fund_acc_num and Instruction.time>flag1 and Instruction.time<flag2).all()
+        data=db.session.query(Instruction.buy_sell_flag, Instruction.stock_id, Instruction.target_price, Instruction.total_amount, Instruction.target_number, Instruction.actual_number, Instruction.instruction_state, Instruction.time).join(Stock).filter(and_(Instruction.fund_account_number==fund_acc_num, Instruction.time>flag1, Instruction.time<flag2)).all()
         res = []
         content = {}
         for i in data:
