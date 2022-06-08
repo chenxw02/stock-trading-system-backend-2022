@@ -56,7 +56,7 @@ def wrong_money_error(error):
 
 @account_admin_api.errorhandler(ConditionNotMeetError)
 def condition_not_meet_error(error):
-    return Result.error(prefix + "1", "该账户不满足重新开户条件")
+    return Result.error(prefix + "1", "该账户不满足重新开户条件,未冻结或其下还有资金账户")
 
 
 @account_admin_api.errorhandler(NoSecuritiesError)
