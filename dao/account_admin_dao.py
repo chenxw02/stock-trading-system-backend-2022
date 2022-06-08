@@ -199,7 +199,6 @@ class AccountAdminDao:
             agent=agent, user_address=user_address).all()
         return security_account
 
-
     @staticmethod
     def get_fund_account_information_by_query(sql_query, account_data):
         print(sql_query)
