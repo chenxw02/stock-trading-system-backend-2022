@@ -82,10 +82,10 @@ class ConAuc:
         t_time = ConAuc.getnowtime()
         i_id1 = ConAucDao.gettransinstr(b_id)
         i_id2 = ConAucDao.gettransinstr(s_id)
-        t1_id = ConAucDao.updatetransinfo(stock_id, b_s_flag1, a_number1, t_price,
-                        t_amount, t_number, t_date, t_time, i_id1)
-        t2_id = ConAucDao.updatetransinfo(stock_id, b_s_flag2, a_number2, t_price,
-                        t_amount, t_number, t_date, t_time, i_id2)
+        t1_id = ConAucDao.updatetransinfo(stock_id, b_s_flag1, a_number1, round(t_price,2),
+                        round(t_amount,2), t_number, t_date, t_time, i_id1)
+        t2_id = ConAucDao.updatetransinfo(stock_id, b_s_flag2, a_number2, round(t_price,2),
+                        round(t_amount,2), t_number, t_date, t_time, i_id2)
         t_id = [t1_id, t2_id]
         return t_id
     
